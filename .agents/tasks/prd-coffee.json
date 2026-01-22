@@ -643,7 +643,7 @@
     {
       "id": "US-018",
       "title": "Pickup scheduling slots",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-017",
         "US-008"
@@ -655,13 +655,13 @@
         "Negative: user can select a time outside hours"
       ],
       "startedAt": "2026-01-22T16:08:18.535912+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T16:08:18.536045+00:00"
+      "completedAt": "2026-01-22T16:17:17.984587+00:00",
+      "updatedAt": "2026-01-22T16:17:17.984406+00:00"
     },
     {
       "id": "US-019",
       "title": "Payment methods selection",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-017",
         "US-003"
@@ -671,7 +671,9 @@
         "List saved methods and allow selection",
         "Example: default method preselected",
         "Negative: checkout proceeds with no method selected"
-      ]
+      ],
+      "completedAt": "2026-01-22T16:27:03.375250+00:00",
+      "updatedAt": "2026-01-22T16:17:20.204675+00:00"
     },
     {
       "id": "US-020",
