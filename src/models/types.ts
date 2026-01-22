@@ -46,3 +46,11 @@ export interface Order {
   fulfillmentType: FulfillmentType;
   scheduledAt?: string;
 }
+
+export interface PaymentMethod {
+  id: string;
+  type: 'card' | 'wallet' | 'cash';
+  token: string;
+  last4: string;
+  isDefault: boolean;
+}

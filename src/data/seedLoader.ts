@@ -1,4 +1,4 @@
-import type { MenuItem, Store } from '../models/types';
+import type { MenuItem, PaymentMethod, Store } from '../models/types';
 
 declare const require: (path: string) => unknown;
 
@@ -43,9 +43,15 @@ export const loadMenu = (): MenuItem[] =>
 export const loadPromos = (): SeedPromo[] =>
   safeLoad(() => require('../../seeds/promos.json') as SeedPromo[]);
 
+export const loadPaymentMethods = (): PaymentMethod[] =>
+  safeLoad(
+    () => require('../../seeds/payment_methods.json') as PaymentMethod[],
+  );
+
 export const loadSeedData = () => ({
   users: loadUsers(),
   stores: loadStores(),
   menu: loadMenu(),
   promos: loadPromos(),
+  paymentMethods: loadPaymentMethods(),
 });

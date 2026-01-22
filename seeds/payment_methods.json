@@ -1,0 +1,16 @@
+[
+  {
+    "id": "pay_001",
+    "type": "card",
+    "token": "tok_visa_4242",
+    "last4": "4242",
+    "isDefault": true
+  },
+  {
+    "id": "pay_002",
+    "type": "card",
+    "token": "tok_mc_1881",
+    "last4": "1881",
+    "isDefault": false
+  }
+]

@@ -7,9 +7,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { loadStores } from '../../data/seedLoader';
+import { loadPaymentMethods, loadStores } from '../../data/seedLoader';
 import { useCart } from '../../data/cart';
-import type { Store } from '../../models/types';
+import type { PaymentMethod, Store } from '../../models/types';
 
 type FulfillmentType = 'pickup' | 'delivery';
 
@@ -92,8 +92,23 @@ const buildPickupSlots = (store: Store) => {
   return slots;
 };
 
+const formatPaymentMethodLabel = (method: PaymentMethod) => {
+  if (method.type === 'card') {
+    return `Card •••• ${method.last4}`;
+  }
+  if (method.type === 'wallet') {
+    return 'Wallet';
+  }
+  return 'Cash';
+};
+
 export default function CheckoutScreen() {
   const stores = useMemo(() => loadStores(), []);
+  const paymentMethods = useMemo(() => loadPaymentMethods(), []);
+  const defaultPaymentMethodId = useMemo(
+    () => paymentMethods.find((method) => method.isDefault)?.id ?? '',
+    [paymentMethods],
+  );
   const pickupStores = useMemo(
     () => stores.filter((store) => store.isPickupEnabled),
     [stores],
@@ -104,6 +119,9 @@ export default function CheckoutScreen() {
   const [selectedStoreId, setSelectedStoreId] = useState('');
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [selectedPickupSlot, setSelectedPickupSlot] = useState('');
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(
+    defaultPaymentMethodId,
+  );
 
   const selectedStore = useMemo(
     () => pickupStores.find((store) => store.id === selectedStoreId),
@@ -129,19 +147,33 @@ export default function CheckoutScreen() {
     }
   }, [fulfillmentType]);
 
-  const requiresSelection =
+  useEffect(() => {
+    if (!selectedPaymentMethodId && defaultPaymentMethodId) {
+      setSelectedPaymentMethodId(defaultPaymentMethodId);
+    }
+  }, [defaultPaymentMethodId, selectedPaymentMethodId]);
+
+  const fulfillmentMissing =
     fulfillmentType === 'pickup'
       ? !selectedStore || !selectedPickupSlot
       : !selectedAddress;
+  const paymentMissing =
+    paymentMethods.length === 0 || !selectedPaymentMethodId;
+  const requiresSelection = fulfillmentMissing || paymentMissing;
   const canContinue = totals.itemCount > 0 && !requiresSelection;
-  const helperText =
-    fulfillmentType === 'pickup'
+  const helperText = fulfillmentMissing
+    ? fulfillmentType === 'pickup'
       ? !selectedStore
         ? 'Select a pickup store to continue.'
         : pickupSlots.length === 0
           ? 'No pickup slots are available within store hours.'
           : 'Select a pickup time to continue.'
-      : 'Select a delivery address to continue.';
+      : 'Select a delivery address to continue.'
+    : paymentMissing
+      ? paymentMethods.length === 0
+        ? 'No saved payment methods available.'
+        : 'Select a payment method to continue.'
+      : '';
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -314,7 +346,62 @@ export default function CheckoutScreen() {
             </View>
           </View>
         )}
-        {requiresSelection ? (
+        <View style={styles.selectorCard}>
+          <View style={styles.selectorHeader}>
+            <Text style={styles.sectionTitle}>Payment method</Text>
+            <Text style={styles.sectionHint}>
+              Choose a saved method for this order.
+            </Text>
+          </View>
+          {paymentMethods.length === 0 ? (
+            <Text style={styles.emptyText}>
+              No saved payment methods yet.
+            </Text>
+          ) : (
+            <View style={styles.selectorList}>
+              {paymentMethods.map((method) => {
+                const isSelected = method.id === selectedPaymentMethodId;
+                return (
+                  <Pressable
+                    key={method.id}
+                    onPress={() => setSelectedPaymentMethodId(method.id)}
+                    style={({ pressed }) => [
+                      styles.selectorItem,
+                      isSelected && styles.selectorItemActive,
+                      pressed && styles.selectorItemPressed,
+                    ]}
+                  >
+                    <View style={styles.selectorTextBlock}>
+                      <Text style={styles.selectorTitle}>
+                        {formatPaymentMethodLabel(method)}
+                      </Text>
+                      <Text style={styles.selectorSubtitle}>
+                        {method.type === 'card'
+                          ? 'Debit or credit card'
+                          : method.type === 'wallet'
+                            ? 'Connected wallet'
+                            : 'Pay at pickup'}
+                      </Text>
+                    </View>
+                    <View style={styles.badgeColumn}>
+                      {method.isDefault ? (
+                        <View style={styles.defaultBadge}>
+                          <Text style={styles.defaultBadgeText}>Default</Text>
+                        </View>
+                      ) : null}
+                      {isSelected ? (
+                        <View style={styles.selectedBadge}>
+                          <Text style={styles.selectedBadgeText}>Selected</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
+        </View>
+        {requiresSelection && helperText ? (
           <Text style={styles.helperText}>{helperText}</Text>
         ) : null}
         <View style={styles.ctaCard}>
@@ -464,6 +551,24 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#8a6b52',
   },
+  badgeColumn: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+  defaultBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#e8d2bf',
+  },
+  defaultBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#7a4b24',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
   selectedBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
@@ -482,6 +587,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 12,
     color: '#b23a2a',
+  },
+  emptyText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#8b7c6f',
   },
   slotSection: {
     marginTop: 16,
