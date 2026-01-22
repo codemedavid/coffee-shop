@@ -1,0 +1,773 @@
+{
+  "version": 1,
+  "project": "Coffee Ordering App (React Native)",
+  "overview": "Build a Zus Coffee-inspired mobile app that lets users browse a menu, customize drinks, and place pickup or delivery orders with loyalty rewards and order tracking.",
+  "goals": [
+    "Enable fast menu browsing and drink customization",
+    "Support pickup and delivery checkout flows",
+    "Provide order status, history, and re-order",
+    "Offer rewards and promo redemption"
+  ],
+  "nonGoals": [
+    "Multi-brand marketplace",
+    "Live driver map tracking",
+    "In-app chat support",
+    "Subscription plans"
+  ],
+  "successMetrics": [
+    "User can place a pickup order in under 2 minutes using seeded data",
+    "All stories pass defined quality gates",
+    "No blocked flows due to missing mock data"
+  ],
+  "openQuestions": [
+    "Auth method: phone-only OTP, email/password, or both?",
+    "Payment support: card only, wallet, or cash-on-delivery?",
+    "Delivery provider integration or mocked delivery only?",
+    "Loyalty rules: points per currency unit and tier thresholds?",
+    "Design system: follow Zus-like UI or custom branding?"
+  ],
+  "stack": {
+    "framework": "React Native (Expo, TypeScript)",
+    "hosting": "N/A (mobile app)",
+    "database": "Local JSON seeds (phase 1)",
+    "auth": "Mocked OTP + local session (phase 1)"
+  },
+  "routes": [
+    {
+      "path": "Welcome",
+      "name": "Welcome",
+      "purpose": "Entry point and login options"
+    },
+    {
+      "path": "Login",
+      "name": "Login",
+      "purpose": "Email/phone login"
+    },
+    {
+      "path": "OTP",
+      "name": "OTP",
+      "purpose": "OTP verification"
+    },
+    {
+      "path": "Home",
+      "name": "Home",
+      "purpose": "Featured items, categories, last order"
+    },
+    {
+      "path": "StoreSelector",
+      "name": "Store Selector",
+      "purpose": "Select pickup store"
+    },
+    {
+      "path": "Menu",
+      "name": "Menu",
+      "purpose": "Category menu list"
+    },
+    {
+      "path": "ProductDetail",
+      "name": "Product Detail",
+      "purpose": "Item details + customization"
+    },
+    {
+      "path": "Cart",
+      "name": "Cart",
+      "purpose": "Cart review"
+    },
+    {
+      "path": "Checkout",
+      "name": "Checkout",
+      "purpose": "Pickup/delivery + payment"
+    },
+    {
+      "path": "OrderConfirmation",
+      "name": "Order Confirmation",
+      "purpose": "Order summary"
+    },
+    {
+      "path": "OrderStatus",
+      "name": "Order Status",
+      "purpose": "Timeline tracking"
+    },
+    {
+      "path": "Orders",
+      "name": "Orders",
+      "purpose": "Order history list"
+    },
+    {
+      "path": "Rewards",
+      "name": "Rewards",
+      "purpose": "Points + tier"
+    },
+    {
+      "path": "Profile",
+      "name": "Profile",
+      "purpose": "User profile"
+    },
+    {
+      "path": "Addresses",
+      "name": "Addresses",
+      "purpose": "Delivery addresses"
+    },
+    {
+      "path": "Payments",
+      "name": "Payments",
+      "purpose": "Saved payment methods"
+    },
+    {
+      "path": "Notifications",
+      "name": "Notifications",
+      "purpose": "Notification inbox"
+    },
+    {
+      "path": "Faq",
+      "name": "FAQ",
+      "purpose": "Static content"
+    }
+  ],
+  "uiNotes": [
+    "Use a bottom tab for Home/Menu/Orders/Rewards/Profile",
+    "Use modal for Store Selector",
+    "Support loading and empty states on lists"
+  ],
+  "dataModel": [
+    {
+      "entity": "User",
+      "fields": [
+        "id",
+        "name",
+        "email",
+        "phone",
+        "verified",
+        "tier",
+        "points",
+        "preferences",
+        "referralCode"
+      ]
+    },
+    {
+      "entity": "Session",
+      "fields": [
+        "token",
+        "userId",
+        "expiresAt"
+      ]
+    },
+    {
+      "entity": "Store",
+      "fields": [
+        "id",
+        "name",
+        "address",
+        "hours",
+        "closures",
+        "distance",
+        "isPickupEnabled",
+        "isDeliveryEnabled"
+      ]
+    },
+    {
+      "entity": "Category",
+      "fields": [
+        "id",
+        "name",
+        "sortOrder"
+      ]
+    },
+    {
+      "entity": "MenuItem",
+      "fields": [
+        "id",
+        "name",
+        "categoryId",
+        "basePrice",
+        "tags",
+        "badge",
+        "availability",
+        "imageUrls"
+      ]
+    },
+    {
+      "entity": "CustomizationOption",
+      "fields": [
+        "id",
+        "itemId",
+        "type",
+        "required",
+        "choices",
+        "pricingRule"
+      ]
+    },
+    {
+      "entity": "Cart",
+      "fields": [
+        "id",
+        "userId",
+        "storeId",
+        "items",
+        "fees",
+        "totals",
+        "appliedPromoId"
+      ]
+    },
+    {
+      "entity": "CartItem",
+      "fields": [
+        "id",
+        "itemId",
+        "customizations",
+        "qty",
+        "unitPrice",
+        "notes"
+      ]
+    },
+    {
+      "entity": "Order",
+      "fields": [
+        "id",
+        "userId",
+        "storeId",
+        "items",
+        "status",
+        "total",
+        "eta",
+        "fulfillmentType",
+        "scheduledAt"
+      ]
+    },
+    {
+      "entity": "Promo",
+      "fields": [
+        "id",
+        "code",
+        "type",
+        "amount",
+        "minSpend",
+        "expiry",
+        "eligibility"
+      ]
+    },
+    {
+      "entity": "Voucher",
+      "fields": [
+        "id",
+        "title",
+        "type",
+        "amount",
+        "expiry",
+        "eligibility"
+      ]
+    },
+    {
+      "entity": "PaymentMethod",
+      "fields": [
+        "id",
+        "type",
+        "token",
+        "last4",
+        "isDefault"
+      ]
+    },
+    {
+      "entity": "Address",
+      "fields": [
+        "id",
+        "userId",
+        "label",
+        "line1",
+        "city",
+        "postalCode",
+        "lat",
+        "lng",
+        "isDefault"
+      ]
+    },
+    {
+      "entity": "RewardsRule",
+      "fields": [
+        "id",
+        "pointsPerCurrency",
+        "multiplier",
+        "validFrom",
+        "validTo"
+      ]
+    },
+    {
+      "entity": "RewardTransaction",
+      "fields": [
+        "id",
+        "points",
+        "type",
+        "date",
+        "orderId"
+      ]
+    },
+    {
+      "entity": "Notification",
+      "fields": [
+        "id",
+        "title",
+        "body",
+        "deepLink",
+        "createdAt"
+      ]
+    }
+  ],
+  "importFormat": {
+    "description": "Seed JSON files stored in seeds/ with top-level arrays per entity.",
+    "example": {
+      "users": [
+        {
+          "id": "u_001",
+          "name": "Ari",
+          "phone": "60123456789",
+          "points": 120
+        }
+      ],
+      "stores": [
+        {
+          "id": "s_001",
+          "name": "Zus SS2",
+          "distanceKm": 1.2
+        }
+      ]
+    }
+  },
+  "rules": [
+    "Cart items must belong to a single store per checkout",
+    "Required customization options must be selected before adding to cart",
+    "Promo/voucher eligibility must be validated against minSpend and expiry",
+    "Scheduled pickup must fall within store hours and lead time",
+    "Rewards redemption cannot exceed max redeemable points"
+  ],
+  "qualityGates": [
+    "npm run lint",
+    "npm run typecheck",
+    "npm test"
+  ],
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Initialize React Native (Expo) project scaffold",
+      "status": "in_progress",
+      "dependsOn": [],
+      "description": "As a developer, I want a React Native project scaffolded so I can start building features.",
+      "acceptanceCriteria": [
+        "Project created with TypeScript and runs on iOS/Android simulators",
+        "Example: `npx create-expo-app coffee-app --template` completed and app launches",
+        "Negative: app launch fails due to missing config or scripts",
+        "Add scripts for lint/typecheck/test in package.json",
+        "Example: `npm run lint` exits 0 with no files",
+        "Negative: `npm run lint` missing from scripts"
+      ],
+      "completedAt": null,
+      "updatedAt": "2026-01-22T07:22:02.314254+00:00",
+      "startedAt": "2026-01-22T07:22:02.313983+00:00"
+    },
+    {
+      "id": "US-002",
+      "title": "Add navigation + app shell",
+      "status": "open",
+      "dependsOn": [
+        "US-001"
+      ],
+      "description": "As a user, I want a basic navigation shell so I can move between core screens.",
+      "acceptanceCriteria": [
+        "Install React Navigation dependencies",
+        "Example: `npm install @react-navigation/native @react-navigation/bottom-tabs` recorded",
+        "Negative: navigation imports fail due to missing packages",
+        "Bottom tabs include Home, Menu, Orders, Rewards, Profile",
+        "Example: switching tabs shows placeholder screens",
+        "Negative: tab press results in blank screen"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "Seed data loader and typed models",
+      "status": "open",
+      "dependsOn": [
+        "US-001"
+      ],
+      "description": "As a developer, I want local seed data and models so UI can render deterministically.",
+      "acceptanceCriteria": [
+        "Create seeds/ folder with JSON files for users, stores, menu, promos",
+        "Example: seed loader returns a store list with 2 entries",
+        "Negative: loader returns empty when seeds are missing",
+        "Expose typed interfaces for MenuItem, Store, Order"
+      ]
+    },
+    {
+      "id": "US-004",
+      "title": "Auth screens (Welcome/Login/OTP/Register/Forgot)",
+      "status": "open",
+      "dependsOn": [
+        "US-002"
+      ],
+      "description": "As a user, I want onboarding screens so I can log in or register.",
+      "acceptanceCriteria": [
+        "Create screens with form fields and error states",
+        "Example: Login screen shows phone/email + continue button",
+        "Negative: submit allowed with empty input"
+      ]
+    },
+    {
+      "id": "US-005",
+      "title": "Auth validation rules",
+      "status": "open",
+      "dependsOn": [
+        "US-004"
+      ],
+      "description": "As a user, I want validation so incorrect inputs are blocked.",
+      "acceptanceCriteria": [
+        "Implement validators for phone/email/OTP length",
+        "Example: invalid email shows inline error",
+        "Negative: invalid phone continues to OTP"
+      ]
+    },
+    {
+      "id": "US-006",
+      "title": "Mock OTP request + verify",
+      "status": "open",
+      "dependsOn": [
+        "US-005"
+      ],
+      "description": "As a user, I want OTP verification so I can complete login.",
+      "acceptanceCriteria": [
+        "Mock service returns OTP token + expiry",
+        "Example: correct OTP transitions to Home",
+        "Negative: expired OTP shows error and blocks login"
+      ]
+    },
+    {
+      "id": "US-007",
+      "title": "Home screen layout",
+      "status": "open",
+      "dependsOn": [
+        "US-003",
+        "US-002"
+      ],
+      "description": "As a user, I want a home screen with featured items and categories.",
+      "acceptanceCriteria": [
+        "Render banner, featured carousel, categories list",
+        "Example: featured section shows seeded items",
+        "Negative: empty featured list shows empty state"
+      ]
+    },
+    {
+      "id": "US-008",
+      "title": "Store selector modal",
+      "status": "open",
+      "dependsOn": [
+        "US-003",
+        "US-007"
+      ],
+      "description": "As a user, I want to select a store so menu availability is accurate.",
+      "acceptanceCriteria": [
+        "Show nearest + favorite store list with hours",
+        "Example: selecting store updates active store label",
+        "Negative: closed store selection is blocked"
+      ]
+    },
+    {
+      "id": "US-009",
+      "title": "Menu browsing by category + search",
+      "status": "open",
+      "dependsOn": [
+        "US-003",
+        "US-002"
+      ],
+      "description": "As a user, I want to browse menu items by category and search.",
+      "acceptanceCriteria": [
+        "Category tabs filter menu list",
+        "Example: Espresso category shows only espresso items",
+        "Negative: search returns items from wrong category"
+      ]
+    },
+    {
+      "id": "US-010",
+      "title": "Item badges and favorites",
+      "status": "open",
+      "dependsOn": [
+        "US-009"
+      ],
+      "description": "As a user, I want to see badges and save favorites.",
+      "acceptanceCriteria": [
+        "Badges render for new/popular/promo",
+        "Example: favorite toggled updates favorites list",
+        "Negative: favorite state resets after navigation"
+      ]
+    },
+    {
+      "id": "US-011",
+      "title": "Product detail screen",
+      "status": "open",
+      "dependsOn": [
+        "US-009"
+      ],
+      "description": "As a user, I want to view item details before customizing.",
+      "acceptanceCriteria": [
+        "Show images, description, allergens, base price",
+        "Example: item detail matches seeded data",
+        "Negative: missing item ID shows not found state"
+      ]
+    },
+    {
+      "id": "US-012",
+      "title": "Customization engine + pricing",
+      "status": "open",
+      "dependsOn": [
+        "US-011",
+        "US-003"
+      ],
+      "description": "As a user, I want to customize size, sugar, and add-ons with correct pricing.",
+      "acceptanceCriteria": [
+        "Required options enforced before add-to-cart",
+        "Example: add-on price increases total",
+        "Negative: add-to-cart allowed with missing required option"
+      ]
+    },
+    {
+      "id": "US-013",
+      "title": "Quantity + special instructions",
+      "status": "open",
+      "dependsOn": [
+        "US-012"
+      ],
+      "description": "As a user, I want to change quantity and add notes.",
+      "acceptanceCriteria": [
+        "Quantity changes total price",
+        "Example: qty 2 doubles base price",
+        "Negative: qty 0 allowed"
+      ]
+    },
+    {
+      "id": "US-014",
+      "title": "Cart state + UI",
+      "status": "open",
+      "dependsOn": [
+        "US-012"
+      ],
+      "description": "As a user, I want to review and edit cart items.",
+      "acceptanceCriteria": [
+        "Add/update/remove items reflected in totals",
+        "Example: removing item updates total",
+        "Negative: totals remain unchanged after removal"
+      ]
+    },
+    {
+      "id": "US-015",
+      "title": "Fee calculation rules",
+      "status": "open",
+      "dependsOn": [
+        "US-014"
+      ],
+      "description": "As a user, I want taxes and fees calculated correctly.",
+      "acceptanceCriteria": [
+        "Apply tax, delivery, and small-order fees",
+        "Example: cart below min adds small-order fee",
+        "Negative: fee applied when cart meets min spend"
+      ]
+    },
+    {
+      "id": "US-016",
+      "title": "Promo and voucher application",
+      "status": "open",
+      "dependsOn": [
+        "US-014",
+        "US-003"
+      ],
+      "description": "As a user, I want to apply promo/voucher codes at checkout.",
+      "acceptanceCriteria": [
+        "Valid promo reduces total and shows applied state",
+        "Example: code ZUS10 applies 10% discount",
+        "Negative: expired code shows error and no discount"
+      ]
+    },
+    {
+      "id": "US-017",
+      "title": "Checkout pickup/delivery toggle",
+      "status": "open",
+      "dependsOn": [
+        "US-014",
+        "US-008"
+      ],
+      "description": "As a user, I want to choose pickup or delivery during checkout.",
+      "acceptanceCriteria": [
+        "Pickup requires store selection; delivery requires address",
+        "Example: delivery shows address selector",
+        "Negative: checkout allowed without required selection"
+      ]
+    },
+    {
+      "id": "US-018",
+      "title": "Pickup scheduling slots",
+      "status": "open",
+      "dependsOn": [
+        "US-017",
+        "US-008"
+      ],
+      "description": "As a user, I want to schedule pickup time within store hours.",
+      "acceptanceCriteria": [
+        "Generate slots based on store hours and lead time",
+        "Example: slot list excludes closed hours",
+        "Negative: user can select a time outside hours"
+      ]
+    },
+    {
+      "id": "US-019",
+      "title": "Payment methods selection",
+      "status": "open",
+      "dependsOn": [
+        "US-017",
+        "US-003"
+      ],
+      "description": "As a user, I want to select a payment method.",
+      "acceptanceCriteria": [
+        "List saved methods and allow selection",
+        "Example: default method preselected",
+        "Negative: checkout proceeds with no method selected"
+      ]
+    },
+    {
+      "id": "US-020",
+      "title": "Order submission + confirmation",
+      "status": "open",
+      "dependsOn": [
+        "US-019",
+        "US-015"
+      ],
+      "description": "As a user, I want to place an order and see confirmation.",
+      "acceptanceCriteria": [
+        "Mock order API creates order with ID",
+        "Example: confirmation shows order summary and ETA",
+        "Negative: order submission fails with missing items"
+      ]
+    },
+    {
+      "id": "US-021",
+      "title": "Order status timeline",
+      "status": "open",
+      "dependsOn": [
+        "US-020"
+      ],
+      "description": "As a user, I want to track order status.",
+      "acceptanceCriteria": [
+        "Timeline shows received, preparing, ready, completed",
+        "Example: seeded status updates advance timeline",
+        "Negative: status missing shows fallback state"
+      ]
+    },
+    {
+      "id": "US-022",
+      "title": "Order history + reorder",
+      "status": "open",
+      "dependsOn": [
+        "US-020"
+      ],
+      "description": "As a user, I want to see order history and reorder.",
+      "acceptanceCriteria": [
+        "Order list grouped by date with detail view",
+        "Example: reorder creates cart with previous customizations",
+        "Negative: reorder fails when item is unavailable"
+      ]
+    },
+    {
+      "id": "US-023",
+      "title": "Rewards dashboard + earning rules",
+      "status": "open",
+      "dependsOn": [
+        "US-003"
+      ],
+      "description": "As a user, I want to see points and tier progress.",
+      "acceptanceCriteria": [
+        "Rewards summary shows points and tier",
+        "Example: points calculated from reward rules",
+        "Negative: points display when no history exists"
+      ]
+    },
+    {
+      "id": "US-024",
+      "title": "Rewards redemption at checkout",
+      "status": "open",
+      "dependsOn": [
+        "US-023",
+        "US-017"
+      ],
+      "description": "As a user, I want to redeem points for discounts.",
+      "acceptanceCriteria": [
+        "Redeemable points apply discount and update total",
+        "Example: max redemption enforced",
+        "Negative: redemption allowed with zero points"
+      ]
+    },
+    {
+      "id": "US-025",
+      "title": "Profile + preferences",
+      "status": "open",
+      "dependsOn": [
+        "US-006"
+      ],
+      "description": "As a user, I want to update my profile and preferences.",
+      "acceptanceCriteria": [
+        "Edit profile fields and save locally",
+        "Example: marketing opt-in toggles persist",
+        "Negative: invalid email saved"
+      ]
+    },
+    {
+      "id": "US-026",
+      "title": "Address management",
+      "status": "open",
+      "dependsOn": [
+        "US-025"
+      ],
+      "description": "As a user, I want to manage delivery addresses.",
+      "acceptanceCriteria": [
+        "Add/edit/delete addresses with default flag",
+        "Example: default address used at checkout",
+        "Negative: delete removes the only default without fallback"
+      ]
+    },
+    {
+      "id": "US-027",
+      "title": "Notifications inbox + deep links",
+      "status": "open",
+      "dependsOn": [
+        "US-020"
+      ],
+      "description": "As a user, I want to view notifications and open related orders.",
+      "acceptanceCriteria": [
+        "Inbox shows notifications in reverse chronological order",
+        "Example: tapping order notification opens Order Status",
+        "Negative: invalid deep link crashes app"
+      ]
+    },
+    {
+      "id": "US-028",
+      "title": "Static content screens",
+      "status": "open",
+      "dependsOn": [
+        "US-002"
+      ],
+      "description": "As a user, I want to read FAQs and policies.",
+      "acceptanceCriteria": [
+        "FAQ and legal content loaded from local JSON",
+        "Example: FAQ list renders 3 questions",
+        "Negative: missing JSON shows error state"
+      ]
+    },
+    {
+      "id": "US-029",
+      "title": "Order rating and feedback",
+      "status": "open",
+      "dependsOn": [
+        "US-020"
+      ],
+      "description": "As a user, I want to rate completed orders.",
+      "acceptanceCriteria": [
+        "Rating prompt appears after completed order",
+        "Example: rating saves to local store",
+        "Negative: rating allowed for non-completed order"
+      ]
+    }
+  ]
+}
