@@ -8,6 +8,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ForgotScreen from './src/screens/auth/ForgotScreen';
 import OtpScreen from './src/screens/auth/OtpScreen';
+import HomeScreen from './src/screens/home/HomeScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -33,7 +34,7 @@ function MainTabs() {
       <Tab.Screen
         name="Home"
         options={{ title: 'Home' }}
-        children={() => <ScreenPlaceholder title="Home" />}
+        component={HomeScreen}
       />
       <Tab.Screen
         name="Menu"
