@@ -9,9 +9,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { loadMenu } from '../../data/seedLoader';
 import { useFavorites } from '../../data/favorites';
 import type { MenuItem } from '../../models/types';
+import type { RootStackParamList } from '../auth/types';
 
 const formatCategoryName = (categoryId: string) => {
   const cleaned = categoryId.replace(/^c_/, '');
@@ -54,6 +57,7 @@ const resolveBadgeLabel = (badge?: string) => {
 export default function MenuScreen() {
   const menu = useMemo(() => loadMenu(), []);
   const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const categories = useMemo(() => {
     const ids = Array.from(new Set(menu.map((item) => item.categoryId)));
     const sorted = ids.sort((first, second) => first.localeCompare(second));
@@ -88,7 +92,10 @@ export default function MenuScreen() {
     const badgeLabel = resolveBadgeLabel(item.badge);
     const isItemFavorite = isFavorite(item.id);
     return (
-      <View style={styles.menuCard}>
+      <Pressable
+        onPress={() => navigation.navigate('ProductDetail', { itemId: item.id })}
+        style={({ pressed }) => [styles.menuCard, pressed && styles.menuCardPressed]}
+      >
         <View style={styles.menuCardTopRow}>
           {badgeLabel ? (
             <View
@@ -105,7 +112,10 @@ export default function MenuScreen() {
             <View />
           )}
           <Pressable
-            onPress={() => toggleFavorite(item.id)}
+            onPress={(event) => {
+              event.stopPropagation();
+              toggleFavorite(item.id);
+            }}
             style={({ pressed }) => [
               styles.favoriteButton,
               isItemFavorite && styles.favoriteButtonActive,
@@ -139,7 +149,7 @@ export default function MenuScreen() {
         {item.availability === 'sold_out' ? (
           <Text style={styles.menuAvailability}>Sold out</Text>
         ) : null}
-      </View>
+      </Pressable>
     );
   };
 
@@ -524,6 +534,9 @@ const styles = StyleSheet.create({
   },
   favoriteButtonPressed: {
     transform: [{ scale: 0.97 }],
+  },
+  menuCardPressed: {
+    transform: [{ scale: 0.98 }],
   },
   favoriteButtonText: {
     fontSize: 11,

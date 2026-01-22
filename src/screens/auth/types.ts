@@ -11,4 +11,9 @@ export type RootStackParamList = {
       }
     | undefined;
   MainTabs: undefined;
+  ProductDetail:
+    | {
+        itemId?: string;
+      }
+    | undefined;
 };

@@ -10,6 +10,7 @@ import ForgotScreen from './src/screens/auth/ForgotScreen';
 import OtpScreen from './src/screens/auth/OtpScreen';
 import HomeScreen from './src/screens/home/HomeScreen';
 import MenuScreen from './src/screens/menu/MenuScreen';
+import ProductDetailScreen from './src/screens/menu/ProductDetailScreen';
 import { FavoritesProvider } from './src/data/favorites';
 import type { RootStackParamList } from './src/screens/auth/types';
 
@@ -92,6 +93,11 @@ export default function App() {
             name="MainTabs"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="ProductDetail"
+            component={ProductDetailScreen}
+            options={{ title: 'Product detail' }}
           />
         </RootStack.Navigator>
         <StatusBar style="auto" />

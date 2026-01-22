@@ -523,7 +523,7 @@
     {
       "id": "US-011",
       "title": "Product detail screen",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-009"
       ],
@@ -532,7 +532,10 @@
         "Show images, description, allergens, base price",
         "Example: item detail matches seeded data",
         "Negative: missing item ID shows not found state"
-      ]
+      ],
+      "startedAt": "2026-01-22T09:35:44.455342+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T09:35:44.455591+00:00"
     },
     {
       "id": "US-012",

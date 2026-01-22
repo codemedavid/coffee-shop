@@ -6,6 +6,8 @@ export interface MenuItem {
   name: string;
   categoryId: string;
   basePrice: number;
+  description?: string;
+  allergens?: string[];
   tags: string[];
   badge?: string;
   availability: 'available' | 'sold_out';
