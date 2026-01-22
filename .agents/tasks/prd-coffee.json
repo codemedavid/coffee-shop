@@ -556,7 +556,7 @@
     {
       "id": "US-013",
       "title": "Quantity + special instructions",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-012"
       ],
@@ -565,7 +565,10 @@
         "Quantity changes total price",
         "Example: qty 2 doubles base price",
         "Negative: qty 0 allowed"
-      ]
+      ],
+      "startedAt": "2026-01-22T10:11:14.669426+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T10:11:14.669802+00:00"
     },
     {
       "id": "US-014",

@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
@@ -52,6 +53,8 @@ export default function ProductDetailScreen() {
   const [sizeId, setSizeId] = useState<string | null>(null);
   const [sugarId, setSugarId] = useState<string | null>(null);
   const [addOnIds, setAddOnIds] = useState<string[]>([]);
+  const [quantity, setQuantity] = useState(1);
+  const [notes, setNotes] = useState('');
   const [showErrors, setShowErrors] = useState(false);
 
   if (!item) {
@@ -75,7 +78,8 @@ export default function ProductDetailScreen() {
   );
   const addOnTotal = selectedAddOns.reduce((sum, option) => sum + option.price, 0);
   const sizeUpcharge = selectedSize?.price ?? 0;
-  const totalPrice = item.basePrice + sizeUpcharge + addOnTotal;
+  const unitPrice = item.basePrice + sizeUpcharge + addOnTotal;
+  const totalPrice = unitPrice * quantity;
   const missingRequired = !selectedSize || !selectedSugar;
 
   const toggleAddOn = (id: string) => {
@@ -90,11 +94,14 @@ export default function ProductDetailScreen() {
       return;
     }
     setShowErrors(false);
+    const trimmedNotes = notes.trim();
     Alert.alert(
       'Added to cart',
-      `${item.name} • ${selectedSize?.label} • ${selectedSugar?.label}\nTotal ${formatPrice(
-        totalPrice,
-      )}`,
+      `${item.name} • ${selectedSize?.label} • ${selectedSugar?.label}\nQty ${
+        quantity || 0
+      } • Total ${formatPrice(totalPrice)}${
+        trimmedNotes ? `\nNotes: ${trimmedNotes}` : ''
+      }`,
     );
   };
 
@@ -264,6 +271,52 @@ export default function ProductDetailScreen() {
               );
             })}
           </View>
+        </View>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Quantity</Text>
+            <Text style={styles.sectionCaption}>Min 0</Text>
+          </View>
+          <View style={styles.quantityRow}>
+            <Pressable
+              onPress={() => setQuantity((prev) => Math.max(0, prev - 1))}
+              style={({ pressed }) => [
+                styles.quantityButton,
+                pressed && styles.quantityButtonPressed,
+              ]}
+            >
+              <Text style={styles.quantityButtonLabel}>-</Text>
+            </Pressable>
+            <View style={styles.quantityValue}>
+              <Text style={styles.quantityValueText}>{quantity}</Text>
+              <Text style={styles.quantityValueCaption}>
+                {formatPrice(unitPrice)} each
+              </Text>
+            </View>
+            <Pressable
+              onPress={() => setQuantity((prev) => prev + 1)}
+              style={({ pressed }) => [
+                styles.quantityButton,
+                pressed && styles.quantityButtonPressed,
+              ]}
+            >
+              <Text style={styles.quantityButtonLabel}>+</Text>
+            </Pressable>
+          </View>
+        </View>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Special instructions</Text>
+            <Text style={styles.sectionCaption}>Optional</Text>
+          </View>
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Let us know about allergies or prep requests."
+            placeholderTextColor="#b3a79d"
+            multiline
+            style={styles.notesInput}
+          />
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Allergens</Text>
@@ -436,6 +489,60 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     color: '#b36b2c',
+  },
+  quantityRow: {
+    marginTop: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  quantityButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#efe2d6',
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quantityButtonPressed: {
+    transform: [{ scale: 0.95 }],
+  },
+  quantityButtonLabel: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  quantityValue: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: '#fff4e6',
+  },
+  quantityValueText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  quantityValueCaption: {
+    marginTop: 2,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  notesInput: {
+    marginTop: 6,
+    minHeight: 90,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#efe2d6',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 13,
+    color: '#2b1f14',
+    textAlignVertical: 'top',
   },
   validationText: {
     marginTop: 8,
