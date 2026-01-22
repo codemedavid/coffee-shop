@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { loadPromos } from './seedLoader';
 
 type CartCustomizations = {
   sizeLabel: string;
@@ -27,15 +35,29 @@ type CartTotals = {
   subtotal: number;
   itemCount: number;
   fees: CartFees;
+  discount: number;
   total: number;
+};
+
+type Promo = {
+  id: string;
+  code: string;
+  type: 'percent' | 'fixed';
+  amount: number;
+  minSpend: number;
+  expiry: string;
+  eligibility: string;
 };
 
 type CartContextValue = {
   items: CartItem[];
   totals: CartTotals;
+  appliedPromo: Promo | null;
   addItem: (item: Omit<CartItem, 'id'>) => void;
   updateItemQuantity: (id: string, qty: number) => void;
   removeItem: (id: string) => void;
+  applyPromo: (code: string) => { ok: boolean; message: string };
+  removePromo: () => void;
   clear: () => void;
 };
 
@@ -61,6 +83,33 @@ const calculateFees = (subtotal: number): CartFees => {
   return { tax, delivery, smallOrder, total };
 };
 
+const normalizePromoCode = (code: string) =>
+  code.trim().toUpperCase().replace(/\s+/g, '');
+
+const isPromoExpired = (promo: Promo, now = new Date()) => {
+  const expiryDate = new Date(`${promo.expiry}T23:59:59`);
+  if (Number.isNaN(expiryDate.getTime())) {
+    return false;
+  }
+  return now > expiryDate;
+};
+
+const isPromoEligible = (promo: Promo, subtotal: number) => {
+  if (subtotal < promo.minSpend) {
+    return false;
+  }
+  return !isPromoExpired(promo);
+};
+
+const calculatePromoDiscount = (promo: Promo, subtotal: number) => {
+  if (!isPromoEligible(promo, subtotal)) {
+    return 0;
+  }
+  const rawDiscount =
+    promo.type === 'percent' ? subtotal * (promo.amount / 100) : promo.amount;
+  return Math.min(rawDiscount, subtotal);
+};
+
 const normalizeKeyPart = (value: string) =>
   value.trim().toLowerCase().replace(/\s+/g, ' ');
 
@@ -81,6 +130,8 @@ const buildItemKey = (item: Omit<CartItem, 'id'>) => {
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [appliedPromo, setAppliedPromo] = useState<Promo | null>(null);
+  const promos = useMemo(() => loadPromos(), []);
 
   const totals = useMemo(
     () => {
@@ -90,13 +141,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           acc.subtotal += item.unitPrice * item.qty;
           return acc;
         },
-        { subtotal: 0, itemCount: 0, fees: emptyFees, total: 0 },
+        { subtotal: 0, itemCount: 0, fees: emptyFees, discount: 0, total: 0 },
       );
       const fees = calculateFees(baseTotals.subtotal);
-      return { ...baseTotals, fees, total: baseTotals.subtotal + fees.total };
+      const discount = appliedPromo
+        ? calculatePromoDiscount(appliedPromo, baseTotals.subtotal)
+        : 0;
+      const total = Math.max(0, baseTotals.subtotal + fees.total - discount);
+      return { ...baseTotals, fees, discount, total };
     },
-    [items],
+    [appliedPromo, items],
   );
+
+  useEffect(() => {
+    if (!appliedPromo) {
+      return;
+    }
+    if (!isPromoEligible(appliedPromo, totals.subtotal)) {
+      setAppliedPromo(null);
+    }
+  }, [appliedPromo, totals.subtotal]);
 
   const addItem = (item: Omit<CartItem, 'id'>) => {
     const id = buildItemKey(item);
@@ -126,11 +190,52 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => prev.filter((entry) => entry.id !== id));
   };
 
+  const applyPromo = useCallback(
+    (code: string) => {
+      const normalized = normalizePromoCode(code);
+      if (!normalized) {
+        return { ok: false, message: 'Enter a promo or voucher code.' };
+      }
+      const match = promos.find(
+        (promo) => normalizePromoCode(promo.code) === normalized,
+      );
+      if (!match) {
+        return { ok: false, message: 'Code not recognized.' };
+      }
+      if (isPromoExpired(match)) {
+        return { ok: false, message: 'This code has expired.' };
+      }
+      if (totals.subtotal < match.minSpend) {
+        return {
+          ok: false,
+          message: `Minimum spend is RM ${match.minSpend.toFixed(2)}.`,
+        };
+      }
+      setAppliedPromo(match);
+      return { ok: true, message: `${match.code} applied.` };
+    },
+    [promos, totals.subtotal],
+  );
+
+  const removePromo = useCallback(() => {
+    setAppliedPromo(null);
+  }, []);
+
   const clear = () => setItems([]);
 
   const value = useMemo(
-    () => ({ items, totals, addItem, updateItemQuantity, removeItem, clear }),
-    [items, totals],
+    () => ({
+      items,
+      totals,
+      appliedPromo,
+      addItem,
+      updateItemQuantity,
+      removeItem,
+      applyPromo,
+      removePromo,
+      clear,
+    }),
+    [appliedPromo, applyPromo, items, removePromo, totals],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

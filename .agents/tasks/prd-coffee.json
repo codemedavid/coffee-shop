@@ -590,7 +590,7 @@
     {
       "id": "US-015",
       "title": "Fee calculation rules",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-014"
       ],
@@ -600,14 +600,14 @@
         "Example: cart below min adds small-order fee",
         "Negative: fee applied when cart meets min spend"
       ],
-      "updatedAt": "2026-01-22T15:24:40.916627+00:00",
+      "updatedAt": "2026-01-22T15:40:54.073159+00:00",
       "startedAt": "2026-01-22T15:24:40.916435+00:00",
-      "completedAt": null
+      "completedAt": "2026-01-22T15:40:54.073338+00:00"
     },
     {
       "id": "US-016",
       "title": "Promo and voucher application",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-014",
         "US-003"
@@ -617,7 +617,10 @@
         "Valid promo reduces total and shows applied state",
         "Example: code ZUS10 applies 10% discount",
         "Negative: expired code shows error and no discount"
-      ]
+      ],
+      "startedAt": "2026-01-22T15:40:56.285835+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T15:40:56.286006+00:00"
     },
     {
       "id": "US-017",

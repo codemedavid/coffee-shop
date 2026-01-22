@@ -16,5 +16,14 @@
     "minSpend": 20,
     "expiry": "2026-06-30",
     "eligibility": "new-users"
+  },
+  {
+    "id": "p_003",
+    "code": "OLD5",
+    "type": "fixed",
+    "amount": 5,
+    "minSpend": 10,
+    "expiry": "2023-01-01",
+    "eligibility": "all"
   }
 ]

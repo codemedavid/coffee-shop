@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useCart } from '../../data/cart';
 
 const formatPrice = (price: number) => `RM ${price.toFixed(2)}`;
+const formatDiscount = (amount: number) => `-RM ${amount.toFixed(2)}`;
 
 const joinCustomizations = (customizations: {
   sizeLabel: string;
@@ -24,7 +26,36 @@ const joinCustomizations = (customizations: {
 };
 
 export default function CartScreen() {
-  const { items, totals, updateItemQuantity, removeItem } = useCart();
+  const {
+    items,
+    totals,
+    appliedPromo,
+    updateItemQuantity,
+    removeItem,
+    applyPromo,
+    removePromo,
+  } = useCart();
+  const [promoCode, setPromoCode] = useState('');
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
+
+  const handleApplyPromo = () => {
+    const result = applyPromo(promoCode);
+    if (result.ok) {
+      setPromoError(null);
+      setPromoSuccess(result.message);
+    } else {
+      setPromoSuccess(null);
+      setPromoError(result.message);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    removePromo();
+    setPromoCode('');
+    setPromoError(null);
+    setPromoSuccess(null);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -101,6 +132,69 @@ export default function CartScreen() {
             ))}
           </View>
         )}
+        <View style={styles.promoCard}>
+          <View style={styles.promoHeader}>
+            <Text style={styles.sectionTitle}>Promo or voucher</Text>
+            {appliedPromo ? (
+              <View style={styles.appliedBadge}>
+                <Text style={styles.appliedBadgeText}>Applied</Text>
+              </View>
+            ) : null}
+          </View>
+          {appliedPromo ? (
+            <View style={styles.appliedRow}>
+              <View>
+                <Text style={styles.appliedCode}>{appliedPromo.code}</Text>
+                <Text style={styles.appliedNote}>
+                  Discount ready for checkout.
+                </Text>
+              </View>
+              <Pressable
+                onPress={handleRemovePromo}
+                style={({ pressed }) => [
+                  styles.removePromoButton,
+                  pressed && styles.removePromoButtonPressed,
+                ]}
+              >
+                <Text style={styles.removePromoText}>Remove</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.promoInputRow}>
+              <TextInput
+                value={promoCode}
+                onChangeText={(value) => {
+                  setPromoCode(value);
+                  if (promoError) {
+                    setPromoError(null);
+                  }
+                }}
+                placeholder="Enter code"
+                autoCapitalize="characters"
+                autoCorrect={false}
+                style={styles.promoInput}
+                placeholderTextColor="#b59b86"
+              />
+              <Pressable
+                onPress={handleApplyPromo}
+                disabled={items.length === 0}
+                style={({ pressed }) => [
+                  styles.applyButton,
+                  items.length === 0 && styles.applyButtonDisabled,
+                  pressed && items.length > 0 && styles.applyButtonPressed,
+                ]}
+              >
+                <Text style={styles.applyButtonText}>Apply</Text>
+              </Pressable>
+            </View>
+          )}
+          {promoError ? (
+            <Text style={styles.promoError}>{promoError}</Text>
+          ) : null}
+          {promoSuccess ? (
+            <Text style={styles.promoSuccess}>{promoSuccess}</Text>
+          ) : null}
+        </View>
         <View style={styles.summaryCard}>
           <View style={styles.summaryGroup}>
             <View style={styles.summaryRow}>
@@ -127,6 +221,14 @@ export default function CartScreen() {
                 {formatPrice(totals.fees.tax)}
               </Text>
             </View>
+            {totals.discount > 0 ? (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Promo discount</Text>
+                <Text style={styles.summaryValue}>
+                  {formatDiscount(totals.discount)}
+                </Text>
+              </View>
+            ) : null}
           </View>
           <View style={styles.summaryDivider} />
           <View style={styles.summaryRow}>
@@ -185,6 +287,116 @@ const styles = StyleSheet.create({
   },
   itemsList: {
     gap: 14,
+  },
+  promoCard: {
+    marginTop: 18,
+    backgroundColor: '#fff7ee',
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#f3e2cf',
+  },
+  promoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  appliedBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#f0d5b8',
+  },
+  appliedBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#7a4b24',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  promoInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  promoInput: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#f0ddc8',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 13,
+    color: '#2b1f14',
+  },
+  applyButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: '#6c3f1d',
+  },
+  applyButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  applyButtonDisabled: {
+    backgroundColor: '#c7b3a1',
+  },
+  applyButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff7ee',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  appliedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  appliedCode: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  appliedNote: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  removePromoButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#f2d3a3',
+    backgroundColor: '#fff1d6',
+  },
+  removePromoButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  removePromoText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#a45c2b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  promoError: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#b23a2a',
+  },
+  promoSuccess: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#2f6e3a',
   },
   itemCard: {
     backgroundColor: '#ffffff',

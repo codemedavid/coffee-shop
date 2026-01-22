@@ -143,3 +143,28 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-182
   - Expo web in non-interactive mode needs an explicit port (used `npm run web -- --port 8084`).
   - React Native web Alerts can require explicit dialog handling in automation.
 ---
+## [2026-01-22 23:40:07] - US-015: Fee calculation rules
+Thread: 
+Run: 20260122-232440-36592 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-232440-36592-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-232440-36592-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 4053cff feat(cart): apply tax and fee totals
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: npm run web -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - src/data/cart.tsx
+  - src/screens/cart/CartScreen.tsx
+- What was implemented
+  - Added fee calculation rules (tax, delivery, small-order) into cart totals and surfaced fee breakdown + total in the cart summary UI.
+- **Learnings for future iterations:**
+  - Patterns discovered: cart totals derived via useMemo to keep fee math centralized.
+  - Gotchas encountered: expo web navigation uses tab role selectors for reliable automation.
+  - Useful context: dev-browser server needs persistent background run to avoid page closure errors.
+---
