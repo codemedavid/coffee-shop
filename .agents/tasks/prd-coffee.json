@@ -348,7 +348,7 @@
     {
       "id": "US-001",
       "title": "Initialize React Native (Expo) project scaffold",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [],
       "description": "As a developer, I want a React Native project scaffolded so I can start building features.",
       "acceptanceCriteria": [
@@ -359,14 +359,13 @@
         "Example: `npm run lint` exits 0 with no files",
         "Negative: `npm run lint` missing from scripts"
       ],
-      "completedAt": null,
-      "updatedAt": "2026-01-22T07:22:02.314254+00:00",
-      "startedAt": "2026-01-22T07:22:02.313983+00:00"
+      "completedAt": "2026-01-22T07:32:39.296560+00:00",
+      "updatedAt": "2026-01-22T07:22:02.314254+00:00"
     },
     {
       "id": "US-002",
       "title": "Add navigation + app shell",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-001"
       ],
@@ -378,12 +377,14 @@
         "Bottom tabs include Home, Menu, Orders, Rewards, Profile",
         "Example: switching tabs shows placeholder screens",
         "Negative: tab press results in blank screen"
-      ]
+      ],
+      "completedAt": "2026-01-22T07:40:11.970285+00:00",
+      "updatedAt": "2026-01-22T07:32:49.548558+00:00"
     },
     {
       "id": "US-003",
       "title": "Seed data loader and typed models",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-001"
       ],
@@ -393,7 +394,10 @@
         "Example: seed loader returns a store list with 2 entries",
         "Negative: loader returns empty when seeds are missing",
         "Expose typed interfaces for MenuItem, Store, Order"
-      ]
+      ],
+      "startedAt": "2026-01-22T07:35:08.273347+00:00",
+      "completedAt": "2026-01-22T07:38:42.238628+00:00",
+      "updatedAt": "2026-01-22T07:38:42.238453+00:00"
     },
     {
       "id": "US-004",
