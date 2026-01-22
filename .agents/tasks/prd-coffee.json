@@ -625,7 +625,7 @@
     {
       "id": "US-017",
       "title": "Checkout pickup/delivery toggle",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-014",
         "US-008"
@@ -636,12 +636,14 @@
         "Example: delivery shows address selector",
         "Negative: checkout allowed without required selection"
       ],
-      "updatedAt": "2026-01-22T15:51:52.740529+00:00"
+      "updatedAt": "2026-01-22T16:08:16.333630+00:00",
+      "startedAt": "2026-01-22T15:55:38.764991+00:00",
+      "completedAt": "2026-01-22T16:08:16.333798+00:00"
     },
     {
       "id": "US-018",
       "title": "Pickup scheduling slots",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-017",
         "US-008"
@@ -651,7 +653,10 @@
         "Generate slots based on store hours and lead time",
         "Example: slot list excludes closed hours",
         "Negative: user can select a time outside hours"
-      ]
+      ],
+      "startedAt": "2026-01-22T16:08:18.535912+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T16:08:18.536045+00:00"
     },
     {
       "id": "US-019",

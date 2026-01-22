@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   Pressable,
   SafeAreaView,
@@ -9,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { useCart } from '../../data/cart';
+import type { RootStackParamList } from '../auth/types';
 
 const formatPrice = (price: number) => `RM ${price.toFixed(2)}`;
 const formatDiscount = (amount: number) => `-RM ${amount.toFixed(2)}`;
@@ -38,6 +41,8 @@ export default function CartScreen() {
   const [promoCode, setPromoCode] = useState('');
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleApplyPromo = () => {
     const result = applyPromo(promoCode);
@@ -239,6 +244,24 @@ export default function CartScreen() {
             <Text style={styles.summaryLabel}>Items</Text>
             <Text style={styles.summaryValue}>{totals.itemCount}</Text>
           </View>
+        </View>
+        <View style={styles.checkoutCard}>
+          <Pressable
+            onPress={() => navigation.navigate('Checkout')}
+            disabled={items.length === 0}
+            style={({ pressed }) => [
+              styles.checkoutButton,
+              items.length === 0 && styles.checkoutButtonDisabled,
+              pressed && items.length > 0 && styles.checkoutButtonPressed,
+            ]}
+          >
+            <Text style={styles.checkoutButtonText}>Checkout</Text>
+          </Pressable>
+          {items.length === 0 ? (
+            <Text style={styles.checkoutHint}>
+              Add items before heading to checkout.
+            </Text>
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -524,5 +547,33 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#2b1f14',
+  },
+  checkoutCard: {
+    marginTop: 18,
+  },
+  checkoutButton: {
+    paddingVertical: 14,
+    borderRadius: 16,
+    backgroundColor: '#6c3f1d',
+    alignItems: 'center',
+  },
+  checkoutButtonDisabled: {
+    backgroundColor: '#c7b3a1',
+  },
+  checkoutButtonPressed: {
+    transform: [{ scale: 0.98 }],
+  },
+  checkoutButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#fff7ee',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  checkoutHint: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#8b7c6f',
+    textAlign: 'center',
   },
 });

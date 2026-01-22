@@ -14,6 +14,7 @@ import ProductDetailScreen from './src/screens/menu/ProductDetailScreen';
 import { FavoritesProvider } from './src/data/favorites';
 import { CartProvider } from './src/data/cart';
 import CartScreen from './src/screens/cart/CartScreen';
+import CheckoutScreen from './src/screens/cart/CheckoutScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -106,6 +107,11 @@ export default function App() {
               name="Cart"
               component={CartScreen}
               options={{ title: 'Cart' }}
+            />
+            <RootStack.Screen
+              name="Checkout"
+              component={CheckoutScreen}
+              options={{ title: 'Checkout' }}
             />
           </RootStack.Navigator>
           <StatusBar style="auto" />
