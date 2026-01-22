@@ -523,7 +523,7 @@
     {
       "id": "US-011",
       "title": "Product detail screen",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-009"
       ],
@@ -533,14 +533,13 @@
         "Example: item detail matches seeded data",
         "Negative: missing item ID shows not found state"
       ],
-      "startedAt": "2026-01-22T09:35:44.455342+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T09:35:44.455591+00:00"
+      "completedAt": "2026-01-22T10:08:02.204608+00:00",
+      "updatedAt": "2026-01-22T10:01:42.811114+00:00"
     },
     {
       "id": "US-012",
       "title": "Customization engine + pricing",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-011",
         "US-003"
@@ -550,7 +549,9 @@
         "Required options enforced before add-to-cart",
         "Example: add-on price increases total",
         "Negative: add-to-cart allowed with missing required option"
-      ]
+      ],
+      "completedAt": "2026-01-22T10:08:02.204608+00:00",
+      "updatedAt": "2026-01-22T10:01:45.044903+00:00"
     },
     {
       "id": "US-013",
