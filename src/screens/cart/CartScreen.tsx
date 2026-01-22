@@ -102,9 +102,36 @@ export default function CartScreen() {
           </View>
         )}
         <View style={styles.summaryCard}>
+          <View style={styles.summaryGroup}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Subtotal</Text>
+              <Text style={styles.summaryValue}>
+                {formatPrice(totals.subtotal)}
+              </Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Delivery fee</Text>
+              <Text style={styles.summaryValue}>
+                {formatPrice(totals.fees.delivery)}
+              </Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Small order fee</Text>
+              <Text style={styles.summaryValue}>
+                {formatPrice(totals.fees.smallOrder)}
+              </Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Tax</Text>
+              <Text style={styles.summaryValue}>
+                {formatPrice(totals.fees.tax)}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.summaryDivider} />
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>{formatPrice(totals.subtotal)}</Text>
+            <Text style={styles.summaryLabel}>Total</Text>
+            <Text style={styles.summaryValue}>{formatPrice(totals.total)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Items</Text>
@@ -262,6 +289,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff4e6',
     borderRadius: 18,
     padding: 16,
+  },
+  summaryGroup: {
+    gap: 10,
+  },
+  summaryDivider: {
+    height: 1,
+    backgroundColor: '#f0dfcd',
+    marginVertical: 12,
   },
   summaryRow: {
     flexDirection: 'row',

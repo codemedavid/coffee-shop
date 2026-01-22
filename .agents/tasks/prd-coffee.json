@@ -590,7 +590,7 @@
     {
       "id": "US-015",
       "title": "Fee calculation rules",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-014"
       ],
@@ -600,8 +600,8 @@
         "Example: cart below min adds small-order fee",
         "Negative: fee applied when cart meets min spend"
       ],
-      "updatedAt": "2026-01-22T10:48:56.688080+00:00",
-      "startedAt": null,
+      "updatedAt": "2026-01-22T15:24:40.916627+00:00",
+      "startedAt": "2026-01-22T15:24:40.916435+00:00",
       "completedAt": null
     },
     {

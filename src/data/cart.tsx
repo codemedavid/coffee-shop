@@ -6,6 +6,13 @@ type CartCustomizations = {
   addOnLabels: string[];
 };
 
+type CartFees = {
+  tax: number;
+  delivery: number;
+  smallOrder: number;
+  total: number;
+};
+
 export type CartItem = {
   id: string;
   itemId: string;
@@ -19,6 +26,8 @@ export type CartItem = {
 type CartTotals = {
   subtotal: number;
   itemCount: number;
+  fees: CartFees;
+  total: number;
 };
 
 type CartContextValue = {
@@ -31,6 +40,26 @@ type CartContextValue = {
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
+
+const feeRules = {
+  taxRate: 0.06,
+  deliveryFee: 5,
+  smallOrderMin: 20,
+  smallOrderFee: 2,
+};
+
+const emptyFees: CartFees = { tax: 0, delivery: 0, smallOrder: 0, total: 0 };
+
+const calculateFees = (subtotal: number): CartFees => {
+  if (subtotal <= 0) {
+    return emptyFees;
+  }
+  const delivery = feeRules.deliveryFee;
+  const smallOrder = subtotal < feeRules.smallOrderMin ? feeRules.smallOrderFee : 0;
+  const tax = subtotal * feeRules.taxRate;
+  const total = tax + delivery + smallOrder;
+  return { tax, delivery, smallOrder, total };
+};
 
 const normalizeKeyPart = (value: string) =>
   value.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -54,15 +83,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const totals = useMemo(
-    () =>
-      items.reduce<CartTotals>(
+    () => {
+      const baseTotals = items.reduce<CartTotals>(
         (acc, item) => {
           acc.itemCount += item.qty;
           acc.subtotal += item.unitPrice * item.qty;
           return acc;
         },
-        { subtotal: 0, itemCount: 0 },
-      ),
+        { subtotal: 0, itemCount: 0, fees: emptyFees, total: 0 },
+      );
+      const fees = calculateFees(baseTotals.subtotal);
+      return { ...baseTotals, fees, total: baseTotals.subtotal + fees.total };
+    },
     [items],
   );
 
