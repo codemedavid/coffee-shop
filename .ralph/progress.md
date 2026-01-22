@@ -61,3 +61,31 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-165
   - Gotchas encountered: Expo web requires CI=1 to avoid interactive port prompts
   - Useful context: Home screen checks for featured items by badge or classic tags
 ---
+## [2026-01-22 17:56:15] - US-011: Product detail screen
+Thread: 
+Run: 20260122-173544-90493 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-173544-90493-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-173544-90493-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: ae8c68c feat(menu): add product detail screen
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 npm run web -- --port 19010 -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - seeds/menu.json
+  - src/models/types.ts
+  - src/screens/auth/types.ts
+  - src/screens/menu/MenuScreen.tsx
+  - src/screens/menu/ProductDetailScreen.tsx
+- What was implemented: added product detail screen with images, description, allergens, and base price from seeded menu data; wired menu item navigation and a not-found state for missing IDs
+- **Learnings for future iterations:**
+  - Patterns discovered: root stack routes are more reliable than nested tab stacks for web navigation visibility
+  - Gotchas encountered: nested Pressable taps should stop propagation to avoid unintended navigation
+  - Useful context: CI=1 is required for Expo web to bypass interactive port prompts
+---
