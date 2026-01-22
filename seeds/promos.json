@@ -1,0 +1,20 @@
+[
+  {
+    "id": "p_001",
+    "code": "ZUS10",
+    "type": "percent",
+    "amount": 10,
+    "minSpend": 15,
+    "expiry": "2026-12-31",
+    "eligibility": "all"
+  },
+  {
+    "id": "p_002",
+    "code": "LATTE5",
+    "type": "fixed",
+    "amount": 5,
+    "minSpend": 20,
+    "expiry": "2026-06-30",
+    "eligibility": "new-users"
+  }
+]

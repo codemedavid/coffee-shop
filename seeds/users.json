@@ -1,0 +1,20 @@
+[
+  {
+    "id": "u_001",
+    "name": "Ari",
+    "email": "ari@example.com",
+    "phone": "60123456789",
+    "verified": true,
+    "tier": "silver",
+    "points": 120
+  },
+  {
+    "id": "u_002",
+    "name": "Nina",
+    "email": "nina@example.com",
+    "phone": "60129876543",
+    "verified": false,
+    "tier": "bronze",
+    "points": 40
+  }
+]

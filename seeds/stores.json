@@ -1,0 +1,26 @@
+[
+  {
+    "id": "s_001",
+    "name": "Zus SS2",
+    "address": "37, Jalan SS2/72, Petaling Jaya",
+    "hours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "distanceKm": 1.2,
+    "isPickupEnabled": true,
+    "isDeliveryEnabled": true
+  },
+  {
+    "id": "s_002",
+    "name": "Zus Bangsar",
+    "address": "12, Jalan Bangsar Utama 1, Kuala Lumpur",
+    "hours": {
+      "open": "08:00",
+      "close": "21:00"
+    },
+    "distanceKm": 4.8,
+    "isPickupEnabled": true,
+    "isDeliveryEnabled": false
+  }
+]

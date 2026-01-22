@@ -1,0 +1,22 @@
+[
+  {
+    "id": "m_espresso_001",
+    "name": "Long Black",
+    "categoryId": "c_espresso",
+    "basePrice": 9.0,
+    "tags": ["classic"],
+    "badge": "popular",
+    "availability": "available",
+    "imageUrls": ["https://example.com/long-black.png"]
+  },
+  {
+    "id": "m_latte_001",
+    "name": "Cafe Latte",
+    "categoryId": "c_latte",
+    "basePrice": 11.5,
+    "tags": ["milk"],
+    "badge": "new",
+    "availability": "available",
+    "imageUrls": ["https://example.com/latte.png"]
+  }
+]
