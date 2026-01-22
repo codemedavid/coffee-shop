@@ -607,7 +607,7 @@
     {
       "id": "US-016",
       "title": "Promo and voucher application",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-014",
         "US-003"
@@ -619,8 +619,8 @@
         "Negative: expired code shows error and no discount"
       ],
       "startedAt": "2026-01-22T15:40:56.285835+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T15:40:56.286006+00:00"
+      "completedAt": "2026-01-22T15:51:50.530633+00:00",
+      "updatedAt": "2026-01-22T15:51:50.530458+00:00"
     },
     {
       "id": "US-017",
@@ -635,7 +635,8 @@
         "Pickup requires store selection; delivery requires address",
         "Example: delivery shows address selector",
         "Negative: checkout allowed without required selection"
-      ]
+      ],
+      "updatedAt": "2026-01-22T15:51:52.740529+00:00"
     },
     {
       "id": "US-018",
