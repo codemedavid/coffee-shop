@@ -600,7 +600,9 @@
         "Example: cart below min adds small-order fee",
         "Negative: fee applied when cart meets min spend"
       ],
-      "updatedAt": "2026-01-22T10:38:11.455468+00:00"
+      "updatedAt": "2026-01-22T10:48:56.688080+00:00",
+      "startedAt": null,
+      "completedAt": null
     },
     {
       "id": "US-016",
