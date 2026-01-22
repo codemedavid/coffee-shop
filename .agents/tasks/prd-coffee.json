@@ -453,7 +453,7 @@
     {
       "id": "US-007",
       "title": "Home screen layout",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-003",
         "US-002"
@@ -464,14 +464,14 @@
         "Example: featured section shows seeded items",
         "Negative: empty featured list shows empty state"
       ],
-      "updatedAt": "2026-01-22T08:57:05.540530+00:00",
+      "updatedAt": "2026-01-22T09:04:23.265649+00:00",
       "startedAt": "2026-01-22T08:57:05.540337+00:00",
-      "completedAt": null
+      "completedAt": "2026-01-22T09:04:23.265922+00:00"
     },
     {
       "id": "US-008",
       "title": "Store selector modal",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-003",
         "US-007"
@@ -481,12 +481,15 @@
         "Show nearest + favorite store list with hours",
         "Example: selecting store updates active store label",
         "Negative: closed store selection is blocked"
-      ]
+      ],
+      "startedAt": "2026-01-22T09:04:25.502369+00:00",
+      "completedAt": "2026-01-22T09:11:57.617409+00:00",
+      "updatedAt": "2026-01-22T09:11:57.617077+00:00"
     },
     {
       "id": "US-009",
       "title": "Menu browsing by category + search",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-003",
         "US-002"
@@ -496,12 +499,15 @@
         "Category tabs filter menu list",
         "Example: Espresso category shows only espresso items",
         "Negative: search returns items from wrong category"
-      ]
+      ],
+      "startedAt": "2026-01-22T09:11:59.839003+00:00",
+      "completedAt": "2026-01-22T09:17:15.842838+00:00",
+      "updatedAt": "2026-01-22T09:17:15.842679+00:00"
     },
     {
       "id": "US-010",
       "title": "Item badges and favorites",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-009"
       ],
@@ -510,7 +516,9 @@
         "Badges render for new/popular/promo",
         "Example: favorite toggled updates favorites list",
         "Negative: favorite state resets after navigation"
-      ]
+      ],
+      "completedAt": "2026-01-22T09:34:37.280184+00:00",
+      "updatedAt": "2026-01-22T09:17:18.094457+00:00"
     },
     {
       "id": "US-011",
