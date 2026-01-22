@@ -10,9 +10,11 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { loadMenu } from '../../data/seedLoader';
+import { useCart } from '../../data/cart';
 import type { RootStackParamList } from '../auth/types';
 
 const formatPrice = (price: number) => `RM ${price.toFixed(2)}`;
@@ -44,8 +46,10 @@ const addOnOptions: CustomizationOption[] = [
 
 export default function ProductDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'ProductDetail'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const itemId = route.params?.itemId;
   const menu = useMemo(() => loadMenu(), []);
+  const { addItem } = useCart();
   const item = useMemo(
     () => menu.find((menuItem) => menuItem.id === itemId),
     [menu, itemId],
@@ -93,8 +97,24 @@ export default function ProductDetailScreen() {
       setShowErrors(true);
       return;
     }
+    if (quantity < 1) {
+      Alert.alert('Select quantity', 'Add at least one drink to your cart.');
+      return;
+    }
     setShowErrors(false);
     const trimmedNotes = notes.trim();
+    addItem({
+      itemId: item.id,
+      name: item.name,
+      unitPrice,
+      qty: quantity,
+      customizations: {
+        sizeLabel: selectedSize?.label ?? '',
+        sugarLabel: selectedSugar?.label ?? '',
+        addOnLabels: selectedAddOns.map((option) => option.label),
+      },
+      notes: trimmedNotes || undefined,
+    });
     Alert.alert(
       'Added to cart',
       `${item.name} • ${selectedSize?.label} • ${selectedSugar?.label}\nQty ${
@@ -102,6 +122,10 @@ export default function ProductDetailScreen() {
       } • Total ${formatPrice(totalPrice)}${
         trimmedNotes ? `\nNotes: ${trimmedNotes}` : ''
       }`,
+      [
+        { text: 'View cart', onPress: () => navigation.navigate('Cart') },
+        { text: 'Continue', style: 'cancel' },
+      ],
     );
   };
 

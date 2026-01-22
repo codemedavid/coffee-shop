@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { loadMenu } from '../../data/seedLoader';
 import { useFavorites } from '../../data/favorites';
+import { useCart } from '../../data/cart';
 import type { MenuItem } from '../../models/types';
 import type { RootStackParamList } from '../auth/types';
 
@@ -57,6 +58,7 @@ const resolveBadgeLabel = (badge?: string) => {
 export default function MenuScreen() {
   const menu = useMemo(() => loadMenu(), []);
   const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const { totals } = useCart();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const categories = useMemo(() => {
     const ids = Array.from(new Set(menu.map((item) => item.categoryId)));
@@ -193,7 +195,21 @@ export default function MenuScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Menu</Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.title}>Menu</Text>
+            <Pressable
+              onPress={() => navigation.navigate('Cart')}
+              style={({ pressed }) => [
+                styles.cartButton,
+                pressed && styles.cartButtonPressed,
+              ]}
+            >
+              <Text style={styles.cartButtonText}>Cart</Text>
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{totals.itemCount}</Text>
+              </View>
+            </Pressable>
+          </View>
           <Text style={styles.subtitle}>Pick a category and search your favorites.</Text>
         </View>
         <View style={styles.searchWrapper}>
@@ -294,10 +310,49 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 12,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: '#2b1f14',
+  },
+  cartButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#2f2014',
+    backgroundColor: '#2f2014',
+  },
+  cartButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  cartButtonText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff5e9',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  cartBadge: {
+    minWidth: 20,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: '#f0c070',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#3b2616',
   },
   subtitle: {
     marginTop: 4,

@@ -556,7 +556,7 @@
     {
       "id": "US-013",
       "title": "Quantity + special instructions",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-012"
       ],
@@ -567,13 +567,13 @@
         "Negative: qty 0 allowed"
       ],
       "startedAt": "2026-01-22T10:11:14.669426+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T10:11:14.669802+00:00"
+      "completedAt": "2026-01-22T10:24:12.003709+00:00",
+      "updatedAt": "2026-01-22T10:24:12.003542+00:00"
     },
     {
       "id": "US-014",
       "title": "Cart state + UI",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-012"
       ],
@@ -582,7 +582,10 @@
         "Add/update/remove items reflected in totals",
         "Example: removing item updates total",
         "Negative: totals remain unchanged after removal"
-      ]
+      ],
+      "startedAt": "2026-01-22T10:24:14.242026+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T10:24:14.242188+00:00"
     },
     {
       "id": "US-015",
