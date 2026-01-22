@@ -168,3 +168,32 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-232
   - Gotchas encountered: expo web navigation uses tab role selectors for reliable automation.
   - Useful context: dev-browser server needs persistent background run to avoid page closure errors.
 ---
+## [2026-01-22 23:50:26] - US-016: Promo and voucher application
+Thread: 
+Run: 20260122-234056-39922 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-234056-39922-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-234056-39922-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 7b466d0 feat(cart): apply promo codes
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: npm run web -- --port 19006 -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - .ralph/progress.md
+  - seeds/promos.json
+  - src/data/cart.tsx
+  - src/screens/cart/CartScreen.tsx
+- What was implemented
+  - Added promo validation and discount math to cart totals with expiry/min spend handling.
+  - Built promo/voucher entry UI with applied state, remove action, and discount line item.
+  - Seeded an expired promo for negative testing and verified behavior via web UI (screenshots in /Users/ynadonaire/.codex/skills/dev-browser/tmp/).
+- **Learnings for future iterations:**
+  - Patterns discovered: promo state should live alongside cart totals for consistent recalculation.
+  - Gotchas encountered: dev-browser server may report an existing port; rerun if needed.
+  - Useful context: expo web stayed stable on port 19006 for UI verification.
+---
