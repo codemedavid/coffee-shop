@@ -197,3 +197,32 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-234
   - Gotchas encountered: dev-browser server may report an existing port; rerun if needed.
   - Useful context: expo web stayed stable on port 19006 for UI verification.
 ---
+## [2026-01-23 00:15:27] - US-018: Pickup scheduling slots
+Thread: 
+Run: 20260123-000818-46699 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-000818-46699-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-000818-46699-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: ec3619a feat(checkout): add pickup time slots
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - AGENTS.md
+  - App.tsx
+  - src/screens/auth/types.ts
+  - src/screens/cart/CartScreen.tsx
+  - src/screens/cart/CheckoutScreen.tsx
+- What was implemented
+  - Added pickup slot generation based on store hours with a lead time gate, and required selection before checkout.
+  - Surfaced pickup time chips in checkout with empty-state messaging when no slots exist.
+  - Verified the flow in Expo web; screenshots in /Users/ynadonaire/.codex/skills/dev-browser/tmp/.
+- **Learnings for future iterations:**
+  - Patterns discovered: reset pickup time when store or fulfillment changes to avoid stale selections.
+  - Gotchas encountered: `expo start --web` ignores `--non-interactive`, use `CI=1`.
+  - Useful context: dev-browser server was already running on port 9222.
+---
