@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   Pressable,
   SafeAreaView,
@@ -9,7 +11,10 @@ import {
 } from 'react-native';
 import { loadPaymentMethods, loadStores } from '../../data/seedLoader';
 import { useCart } from '../../data/cart';
+import { createMockOrder } from '../../data/orders';
+import { useOrderHistory } from '../../data/orderHistory';
 import type { PaymentMethod, Store } from '../../models/types';
+import type { RootStackParamList } from '../auth/types';
 
 type FulfillmentType = 'pickup' | 'delivery';
 
@@ -113,7 +118,14 @@ export default function CheckoutScreen() {
     () => stores.filter((store) => store.isPickupEnabled),
     [stores],
   );
-  const { totals } = useCart();
+  const deliveryStores = useMemo(
+    () => stores.filter((store) => store.isDeliveryEnabled),
+    [stores],
+  );
+  const { items, totals, clear } = useCart();
+  const { addOrder } = useOrderHistory();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [fulfillmentType, setFulfillmentType] =
     useState<FulfillmentType>('pickup');
   const [selectedStoreId, setSelectedStoreId] = useState('');
@@ -122,10 +134,16 @@ export default function CheckoutScreen() {
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(
     defaultPaymentMethodId,
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const selectedStore = useMemo(
     () => pickupStores.find((store) => store.id === selectedStoreId),
     [pickupStores, selectedStoreId],
+  );
+  const deliveryStore = useMemo(
+    () => deliveryStores[0],
+    [deliveryStores],
   );
   const selectedAddress = useMemo(
     () => addresses.find((address) => address.id === selectedAddressId),
@@ -161,6 +179,7 @@ export default function CheckoutScreen() {
     paymentMethods.length === 0 || !selectedPaymentMethodId;
   const requiresSelection = fulfillmentMissing || paymentMissing;
   const canContinue = totals.itemCount > 0 && !requiresSelection;
+  const canSubmit = canContinue && !isSubmitting;
   const helperText = fulfillmentMissing
     ? fulfillmentType === 'pickup'
       ? !selectedStore
@@ -174,6 +193,67 @@ export default function CheckoutScreen() {
         ? 'No saved payment methods available.'
         : 'Select a payment method to continue.'
       : '';
+
+  const handleSubmit = async () => {
+    if (!canContinue) {
+      return;
+    }
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const activeStore =
+      fulfillmentType === 'pickup' ? selectedStore : deliveryStore;
+    if (!activeStore) {
+      setSubmitError('No store available for this order.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const itemsSnapshot = items.map((item) => ({
+      ...item,
+      customizations: {
+        ...item.customizations,
+        addOnLabels: [...item.customizations.addOnLabels],
+      },
+    }));
+    const summarySnapshot = {
+      subtotal: totals.subtotal,
+      itemCount: totals.itemCount,
+      fees: { ...totals.fees },
+      discount: totals.discount,
+      total: totals.total,
+    };
+
+    const result = await createMockOrder({
+      userId: 'u_001',
+      storeId: activeStore.id,
+      fulfillmentType,
+      scheduledAt: fulfillmentType === 'pickup' ? selectedPickupSlot : undefined,
+      items: itemsSnapshot,
+      total: totals.total,
+    });
+
+    if (!result.ok) {
+      setSubmitError(result.message);
+      setIsSubmitting(false);
+      return;
+    }
+
+    addOrder(result.order);
+    clear();
+    setIsSubmitting(false);
+    navigation.replace('OrderConfirmation', {
+      order: result.order,
+      items: itemsSnapshot,
+      summary: summarySnapshot,
+      store: {
+        name: activeStore.name,
+        address: activeStore.address,
+      },
+      deliveryAddress:
+        fulfillmentType === 'delivery' ? selectedAddress : undefined,
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -404,6 +484,9 @@ export default function CheckoutScreen() {
         {requiresSelection && helperText ? (
           <Text style={styles.helperText}>{helperText}</Text>
         ) : null}
+        {submitError ? (
+          <Text style={styles.helperText}>{submitError}</Text>
+        ) : null}
         <View style={styles.ctaCard}>
           <View style={styles.ctaRow}>
             <View>
@@ -413,14 +496,17 @@ export default function CheckoutScreen() {
               </Text>
             </View>
             <Pressable
-              disabled={!canContinue}
+              onPress={handleSubmit}
+              disabled={!canSubmit}
               style={({ pressed }) => [
                 styles.ctaButton,
-                !canContinue && styles.ctaButtonDisabled,
-                pressed && canContinue && styles.ctaButtonPressed,
+                !canSubmit && styles.ctaButtonDisabled,
+                pressed && canSubmit && styles.ctaButtonPressed,
               ]}
             >
-              <Text style={styles.ctaButtonText}>Continue</Text>
+              <Text style={styles.ctaButtonText}>
+                {isSubmitting ? 'Placing...' : 'Place order'}
+              </Text>
             </Pressable>
           </View>
           {totals.itemCount === 0 ? (

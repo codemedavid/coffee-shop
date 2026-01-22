@@ -30,8 +30,14 @@ export interface Store {
 export interface OrderItem {
   id: string;
   itemId: string;
+  name: string;
   qty: number;
   unitPrice: number;
+  customizations: {
+    sizeLabel: string;
+    sugarLabel: string;
+    addOnLabels: string[];
+  };
   notes?: string;
 }
 
@@ -44,7 +50,14 @@ export interface Order {
   total: number;
   etaMinutes: number;
   fulfillmentType: FulfillmentType;
+  placedAt: string;
   scheduledAt?: string;
+}
+
+export interface OrderStatusUpdate {
+  orderId: string;
+  status: OrderStatus;
+  timestamp: string;
 }
 
 export interface PaymentMethod {

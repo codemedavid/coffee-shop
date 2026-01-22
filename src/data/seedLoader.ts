@@ -1,4 +1,9 @@
-import type { MenuItem, PaymentMethod, Store } from '../models/types';
+import type {
+  MenuItem,
+  OrderStatusUpdate,
+  PaymentMethod,
+  Store,
+} from '../models/types';
 
 declare const require: (path: string) => unknown;
 
@@ -48,10 +53,17 @@ export const loadPaymentMethods = (): PaymentMethod[] =>
     () => require('../../seeds/payment_methods.json') as PaymentMethod[],
   );
 
+export const loadOrderStatusUpdates = (): OrderStatusUpdate[] =>
+  safeLoad(
+    () =>
+      require('../../seeds/order_status_updates.json') as OrderStatusUpdate[],
+  );
+
 export const loadSeedData = () => ({
   users: loadUsers(),
   stores: loadStores(),
   menu: loadMenu(),
   promos: loadPromos(),
   paymentMethods: loadPaymentMethods(),
+  orderStatusUpdates: loadOrderStatusUpdates(),
 });

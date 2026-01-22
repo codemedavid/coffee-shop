@@ -15,6 +15,8 @@ import { FavoritesProvider } from './src/data/favorites';
 import { CartProvider } from './src/data/cart';
 import CartScreen from './src/screens/cart/CartScreen';
 import CheckoutScreen from './src/screens/cart/CheckoutScreen';
+import OrderConfirmationScreen from './src/screens/cart/OrderConfirmationScreen';
+import OrderStatusScreen from './src/screens/orders/OrderStatusScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -50,7 +52,7 @@ function MainTabs() {
       <Tab.Screen
         name="Orders"
         options={{ title: 'Orders' }}
-        children={() => <ScreenPlaceholder title="Orders" />}
+        children={() => <OrderStatusScreen />}
       />
       <Tab.Screen
         name="Rewards"
@@ -113,6 +115,19 @@ export default function App() {
               component={CheckoutScreen}
               options={{ title: 'Checkout' }}
             />
+            <RootStack.Screen
+              name="OrderConfirmation"
+              component={OrderConfirmationScreen}
+              options={{ title: 'Order confirmation' }}
+            />
+            <RootStack.Screen
+              name="OrderStatus"
+              options={{ title: 'Order status' }}
+            >
+              {(props) => (
+                <OrderStatusScreen order={props.route.params?.order} />
+              )}
+            </RootStack.Screen>
           </RootStack.Navigator>
           <StatusBar style="auto" />
         </NavigationContainer>
