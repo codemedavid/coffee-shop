@@ -17,6 +17,7 @@ import CartScreen from './src/screens/cart/CartScreen';
 import CheckoutScreen from './src/screens/cart/CheckoutScreen';
 import OrderConfirmationScreen from './src/screens/cart/OrderConfirmationScreen';
 import OrderStatusScreen from './src/screens/orders/OrderStatusScreen';
+import RewardsScreen from './src/screens/rewards/RewardsScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -57,7 +58,7 @@ function MainTabs() {
       <Tab.Screen
         name="Rewards"
         options={{ title: 'Rewards' }}
-        children={() => <ScreenPlaceholder title="Rewards" />}
+        component={RewardsScreen}
       />
       <Tab.Screen
         name="Profile"

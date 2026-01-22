@@ -1,0 +1,23 @@
+[
+  {
+    "id": "rt_001",
+    "type": "earn",
+    "date": "2026-01-10",
+    "orderId": "ord_seed_1001",
+    "amount": 18.5
+  },
+  {
+    "id": "rt_002",
+    "type": "earn",
+    "date": "2026-01-17",
+    "orderId": "ord_seed_1002",
+    "amount": 24
+  },
+  {
+    "id": "rt_003",
+    "type": "earn",
+    "date": "2026-01-21",
+    "orderId": "ord_seed_1003",
+    "amount": 15
+  }
+]

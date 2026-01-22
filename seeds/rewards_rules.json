@@ -1,0 +1,16 @@
+[
+  {
+    "id": "rr_2025_standard",
+    "pointsPerCurrency": 1,
+    "multiplier": 1,
+    "validFrom": "2025-01-01",
+    "validTo": "2026-01-15"
+  },
+  {
+    "id": "rr_2026_boost",
+    "pointsPerCurrency": 1,
+    "multiplier": 1.5,
+    "validFrom": "2026-01-16",
+    "validTo": "2026-12-31"
+  }
+]

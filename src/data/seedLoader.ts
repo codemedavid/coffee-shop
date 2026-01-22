@@ -2,6 +2,8 @@ import type {
   MenuItem,
   OrderStatusUpdate,
   PaymentMethod,
+  RewardRule,
+  RewardTransaction,
   Store,
 } from '../models/types';
 
@@ -26,6 +28,10 @@ type SeedPromo = {
   expiry: string;
   eligibility: string;
 };
+
+type SeedRewardRule = RewardRule;
+
+type SeedRewardTransaction = RewardTransaction;
 
 const safeLoad = <T>(loader: () => T[]): T[] => {
   try {
@@ -59,6 +65,15 @@ export const loadOrderStatusUpdates = (): OrderStatusUpdate[] =>
       require('../../seeds/order_status_updates.json') as OrderStatusUpdate[],
   );
 
+export const loadRewardRules = (): SeedRewardRule[] =>
+  safeLoad(() => require('../../seeds/rewards_rules.json') as SeedRewardRule[]);
+
+export const loadRewardTransactions = (): SeedRewardTransaction[] =>
+  safeLoad(
+    () =>
+      require('../../seeds/reward_transactions.json') as SeedRewardTransaction[],
+  );
+
 export const loadSeedData = () => ({
   users: loadUsers(),
   stores: loadStores(),
@@ -66,4 +81,6 @@ export const loadSeedData = () => ({
   promos: loadPromos(),
   paymentMethods: loadPaymentMethods(),
   orderStatusUpdates: loadOrderStatusUpdates(),
+  rewardRules: loadRewardRules(),
+  rewardTransactions: loadRewardTransactions(),
 });

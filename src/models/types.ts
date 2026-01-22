@@ -67,3 +67,20 @@ export interface PaymentMethod {
   last4: string;
   isDefault: boolean;
 }
+
+export interface RewardRule {
+  id: string;
+  pointsPerCurrency: number;
+  multiplier: number;
+  validFrom: string;
+  validTo: string;
+}
+
+export interface RewardTransaction {
+  id: string;
+  type: 'earn' | 'redeem';
+  date: string;
+  orderId?: string;
+  amount?: number;
+  points?: number;
+}
