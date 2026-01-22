@@ -678,7 +678,7 @@
     {
       "id": "US-020",
       "title": "Order submission + confirmation",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-019",
         "US-015"
@@ -688,12 +688,15 @@
         "Mock order API creates order with ID",
         "Example: confirmation shows order summary and ETA",
         "Negative: order submission fails with missing items"
-      ]
+      ],
+      "startedAt": "2026-01-22T16:27:44.760192+00:00",
+      "completedAt": "2026-01-22T16:39:26.118270+00:00",
+      "updatedAt": "2026-01-22T16:39:26.117934+00:00"
     },
     {
       "id": "US-021",
       "title": "Order status timeline",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-020"
       ],
@@ -702,12 +705,15 @@
         "Timeline shows received, preparing, ready, completed",
         "Example: seeded status updates advance timeline",
         "Negative: status missing shows fallback state"
-      ]
+      ],
+      "startedAt": "2026-01-22T16:39:28.329874+00:00",
+      "completedAt": "2026-01-22T16:51:06.652283+00:00",
+      "updatedAt": "2026-01-22T16:51:06.652119+00:00"
     },
     {
       "id": "US-022",
       "title": "Order history + reorder",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-020"
       ],
@@ -716,7 +722,9 @@
         "Order list grouped by date with detail view",
         "Example: reorder creates cart with previous customizations",
         "Negative: reorder fails when item is unavailable"
-      ]
+      ],
+      "completedAt": "2026-01-22T17:04:42.768073+00:00",
+      "updatedAt": "2026-01-22T16:51:08.866771+00:00"
     },
     {
       "id": "US-023",
