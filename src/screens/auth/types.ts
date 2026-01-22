@@ -3,6 +3,12 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Forgot: undefined;
-  OTP: { contact?: string } | undefined;
+  OTP:
+    | {
+        contact?: string;
+        otpToken?: string;
+        expiresAt?: number;
+      }
+    | undefined;
   MainTabs: undefined;
 };

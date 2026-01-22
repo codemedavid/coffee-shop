@@ -3,6 +3,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthLayout, authStyles } from './AuthLayout';
 import type { RootStackParamList } from './types';
+import { validateContact } from './validation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -20,12 +21,13 @@ export default function RegisterScreen({ navigation }: Props) {
 
   const handleSubmit = () => {
     const nextErrors: RegisterErrors = {};
+    const contactValidation = validateContact(contact);
 
     if (!name.trim()) {
       nextErrors.name = 'Please enter your full name.';
     }
-    if (!contact.trim()) {
-      nextErrors.contact = 'Please enter your phone or email.';
+    if (contactValidation.error) {
+      nextErrors.contact = contactValidation.error;
     }
     if (!password.trim()) {
       nextErrors.password = 'Please enter a password.';
@@ -37,7 +39,7 @@ export default function RegisterScreen({ navigation }: Props) {
       return;
     }
 
-    navigation.navigate('OTP', { contact: contact.trim() });
+    navigation.navigate('OTP', { contact: contactValidation.normalized });
   };
 
   return (
@@ -75,14 +77,13 @@ export default function RegisterScreen({ navigation }: Props) {
         value={contact}
         onChangeText={(value) => {
           setContact(value);
-          if (errors.contact && value.trim()) {
+          if (errors.contact && !validateContact(value).error) {
             setErrors((prev) => ({ ...prev, contact: undefined }));
           }
         }}
         onBlur={() => {
-          if (!contact.trim()) {
-            setErrors((prev) => ({ ...prev, contact: 'Please enter your phone or email.' }));
-          }
+          const validation = validateContact(contact);
+          setErrors((prev) => ({ ...prev, contact: validation.error ?? undefined }));
         }}
       />
       {errors.contact ? <Text style={authStyles.errorText}>{errors.contact}</Text> : null}
