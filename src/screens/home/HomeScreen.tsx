@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   FlatList,
   Image,
+  Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { loadMenu } from '../../data/seedLoader';
-import type { MenuItem } from '../../models/types';
+import { loadMenu, loadStores } from '../../data/seedLoader';
+import type { MenuItem, Store } from '../../models/types';
 
 const formatCategoryName = (categoryId: string) => {
   const cleaned = categoryId.replace(/^c_/, '');
@@ -24,8 +26,29 @@ const getFeaturedItems = (items: MenuItem[]) =>
 
 const formatPrice = (price: number) => `RM ${price.toFixed(2)}`;
 
+const formatHours = (hours: Store['hours']) => `${hours.open} - ${hours.close}`;
+
+const parseTimeToMinutes = (value: string) => {
+  const [hour, minute] = value.split(':').map(Number);
+  return hour * 60 + minute;
+};
+
+const isStoreOpenNow = (store: Store, now: Date) => {
+  const openMinutes = parseTimeToMinutes(store.hours.open);
+  const closeMinutes = parseTimeToMinutes(store.hours.close);
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  if (closeMinutes === openMinutes) {
+    return false;
+  }
+  if (closeMinutes < openMinutes) {
+    return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+  }
+  return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+};
+
 export default function HomeScreen() {
   const menu = useMemo(() => loadMenu(), []);
+  const stores = useMemo(() => loadStores(), []);
   const featuredItems = useMemo(() => getFeaturedItems(menu), [menu]);
   const categories = useMemo(() => {
     const ids = Array.from(new Set(menu.map((item) => item.categoryId)));
@@ -35,10 +58,89 @@ export default function HomeScreen() {
       count: menu.filter((item) => item.categoryId === id).length,
     }));
   }, [menu]);
+  const favoriteStoreIds = useMemo(() => ['s_001'], []);
+  const nearestStores = useMemo(
+    () => [...stores].sort((first, second) => first.distanceKm - second.distanceKm),
+    [stores],
+  );
+  const favoriteStores = useMemo(
+    () => stores.filter((store) => favoriteStoreIds.includes(store.id)),
+    [stores, favoriteStoreIds],
+  );
+  const defaultStore = useMemo(() => {
+    const now = new Date();
+    return (
+      nearestStores.find((store) => isStoreOpenNow(store, now)) ??
+      nearestStores[0] ??
+      favoriteStores[0]
+    );
+  }, [favoriteStores, nearestStores]);
+  const [activeStoreId, setActiveStoreId] = useState(defaultStore?.id ?? '');
+  const [storeModalVisible, setStoreModalVisible] = useState(false);
+  const [statusTimestamp, setStatusTimestamp] = useState(new Date());
+  const activeStore = useMemo(
+    () => stores.find((store) => store.id === activeStoreId) ?? defaultStore,
+    [activeStoreId, defaultStore, stores],
+  );
+  const openStoreModal = () => {
+    setStatusTimestamp(new Date());
+    setStoreModalVisible(true);
+  };
+  const closeStoreModal = () => setStoreModalVisible(false);
+  const handleSelectStore = (store: Store) => {
+    setActiveStoreId(store.id);
+    closeStoreModal();
+  };
+  const renderStoreCard = (store: Store) => {
+    const isOpen = isStoreOpenNow(store, statusTimestamp);
+    return (
+      <Pressable
+        key={store.id}
+        onPress={() => handleSelectStore(store)}
+        disabled={!isOpen}
+        style={({ pressed }) => [
+          styles.storeCard,
+          !isOpen && styles.storeCardDisabled,
+          pressed && isOpen && styles.storeCardPressed,
+        ]}
+      >
+        <View style={styles.storeCardHeader}>
+          <Text style={styles.storeName}>{store.name}</Text>
+          <View style={[styles.storeStatus, isOpen ? styles.storeOpen : styles.storeClosed]}>
+            <Text style={[styles.storeStatusText, !isOpen && styles.storeStatusTextClosed]}>
+              {isOpen ? 'Open' : 'Closed'}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.storeAddress}>{store.address}</Text>
+        <View style={styles.storeMetaRow}>
+          <Text style={styles.storeMetaText}>{formatHours(store.hours)}</Text>
+          <Text style={styles.storeMetaText}>{store.distanceKm.toFixed(1)} km</Text>
+        </View>
+        {!isOpen && <Text style={styles.storeClosedNote}>Selection unavailable</Text>}
+      </Pressable>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.storePicker}>
+          <Text style={styles.storeLabel}>Pickup store</Text>
+          <Pressable onPress={openStoreModal} style={styles.storeButton}>
+            <View style={styles.storeButtonContent}>
+              <Text style={styles.storeButtonTitle}>
+                {activeStore ? activeStore.name : 'Select a store'}
+              </Text>
+              {activeStore ? (
+                <Text style={styles.storeButtonSubtitle}>
+                  {activeStore.distanceKm.toFixed(1)} km · {formatHours(activeStore.hours)}
+                </Text>
+              ) : null}
+            </View>
+            <Text style={styles.storeButtonIcon}>Edit</Text>
+          </Pressable>
+        </View>
         <View style={styles.banner}>
           <View style={styles.bannerBadge}>
             <Text style={styles.bannerBadgeText}>Welcome back</Text>
@@ -99,6 +201,39 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
+      <Modal
+        visible={storeModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={closeStoreModal}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>Select a store</Text>
+                <Text style={styles.modalSubtitle}>Choose where you will pick up</Text>
+              </View>
+              <Pressable onPress={closeStoreModal} style={styles.modalClose}>
+                <Text style={styles.modalCloseText}>Close</Text>
+              </Pressable>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={styles.modalSection}>
+                <Text style={styles.modalSectionTitle}>Favorites</Text>
+                {favoriteStores.map((store) => renderStoreCard(store))}
+                {favoriteStores.length === 0 ? (
+                  <Text style={styles.modalEmptyText}>No favorite stores yet.</Text>
+                ) : null}
+              </View>
+              <View style={styles.modalSection}>
+                <Text style={styles.modalSectionTitle}>Nearest stores</Text>
+                {nearestStores.map((store) => renderStoreCard(store))}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -110,6 +245,49 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingBottom: 32,
+  },
+  storePicker: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  storeLabel: {
+    fontSize: 12,
+    color: '#8b7c6f',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    marginBottom: 8,
+  },
+  storeButton: {
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#eee3d7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  storeButtonContent: {
+    flex: 1,
+    marginRight: 12,
+  },
+  storeButtonTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2b1f14',
+  },
+  storeButtonSubtitle: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  storeButtonIcon: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#d5863d',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
   },
   banner: {
     margin: 20,
@@ -238,5 +416,122 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     color: '#8b7c6f',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(22, 15, 9, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    maxHeight: '88%',
+    backgroundColor: '#f8f3ee',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 24,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  modalSubtitle: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  modalClose: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#efe2d6',
+  },
+  modalCloseText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#5a4231',
+  },
+  modalSection: {
+    marginBottom: 20,
+  },
+  modalSectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2b1f14',
+    marginBottom: 10,
+  },
+  modalEmptyText: {
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  storeCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#eee3d7',
+    marginBottom: 12,
+  },
+  storeCardPressed: {
+    transform: [{ scale: 0.98 }],
+  },
+  storeCardDisabled: {
+    opacity: 0.6,
+  },
+  storeCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  storeName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2b1f14',
+  },
+  storeStatus: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  storeOpen: {
+    backgroundColor: '#e4f1e6',
+  },
+  storeClosed: {
+    backgroundColor: '#f7e1df',
+  },
+  storeStatusText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#2f5d3c',
+    textTransform: 'uppercase',
+  },
+  storeStatusTextClosed: {
+    color: '#9e3a33',
+  },
+  storeAddress: {
+    marginTop: 6,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  storeMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  storeMetaText: {
+    fontSize: 11,
+    color: '#a08f83',
+  },
+  storeClosedNote: {
+    marginTop: 8,
+    fontSize: 11,
+    color: '#9e3a33',
   },
 });

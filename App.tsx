@@ -9,6 +9,8 @@ import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ForgotScreen from './src/screens/auth/ForgotScreen';
 import OtpScreen from './src/screens/auth/OtpScreen';
 import HomeScreen from './src/screens/home/HomeScreen';
+import MenuScreen from './src/screens/menu/MenuScreen';
+import { FavoritesProvider } from './src/data/favorites';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -39,7 +41,7 @@ function MainTabs() {
       <Tab.Screen
         name="Menu"
         options={{ title: 'Menu' }}
-        children={() => <ScreenPlaceholder title="Menu" />}
+        component={MenuScreen}
       />
       <Tab.Screen
         name="Orders"
@@ -62,37 +64,39 @@ function MainTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
-        <RootStack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
-          options={{ headerShown: false }}
-        />
-        <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-        <RootStack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{ title: 'Create account' }}
-        />
-        <RootStack.Screen
-          name="Forgot"
-          component={ForgotScreen}
-          options={{ title: 'Reset access' }}
-        />
-        <RootStack.Screen
-          name="OTP"
-          component={OtpScreen}
-          options={{ title: 'Verify OTP' }}
-        />
-        <RootStack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{ headerShown: false }}
-        />
-      </RootStack.Navigator>
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <FavoritesProvider>
+      <NavigationContainer>
+        <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
+          <RootStack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+          <RootStack.Screen
+            name="Register"
+            component={RegisterScreen}
+            options={{ title: 'Create account' }}
+          />
+          <RootStack.Screen
+            name="Forgot"
+            component={ForgotScreen}
+            options={{ title: 'Reset access' }}
+          />
+          <RootStack.Screen
+            name="OTP"
+            component={OtpScreen}
+            options={{ title: 'Verify OTP' }}
+          />
+          <RootStack.Screen
+            name="MainTabs"
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
+        </RootStack.Navigator>
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </FavoritesProvider>
   );
 }
 

@@ -18,5 +18,15 @@
     "badge": "new",
     "availability": "available",
     "imageUrls": ["https://example.com/latte.png"]
+  },
+  {
+    "id": "m_promo_001",
+    "name": "Mocha Fiesta",
+    "categoryId": "c_latte",
+    "basePrice": 12.0,
+    "tags": ["chocolate"],
+    "badge": "promo",
+    "availability": "available",
+    "imageUrls": ["https://example.com/mocha-fiesta.png"]
   }
 ]
