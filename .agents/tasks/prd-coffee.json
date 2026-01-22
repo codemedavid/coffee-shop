@@ -573,7 +573,7 @@
     {
       "id": "US-014",
       "title": "Cart state + UI",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-012"
       ],
@@ -584,8 +584,8 @@
         "Negative: totals remain unchanged after removal"
       ],
       "startedAt": "2026-01-22T10:24:14.242026+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T10:24:14.242188+00:00"
+      "completedAt": "2026-01-22T10:38:09.219942+00:00",
+      "updatedAt": "2026-01-22T10:38:09.219745+00:00"
     },
     {
       "id": "US-015",
@@ -599,7 +599,8 @@
         "Apply tax, delivery, and small-order fees",
         "Example: cart below min adds small-order fee",
         "Negative: fee applied when cart meets min spend"
-      ]
+      ],
+      "updatedAt": "2026-01-22T10:38:11.455468+00:00"
     },
     {
       "id": "US-016",

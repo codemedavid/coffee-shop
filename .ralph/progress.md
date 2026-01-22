@@ -114,3 +114,32 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-181
   - Gotchas encountered: expo start --web prompts for a new port without CI mode.
   - Useful context: Activity logging helper was missing, so manual entries were appended.
 ---
+## [2026-01-22 18:36:48] - US-014: Cart state + UI
+Thread: 
+Run: 20260122-182414-10178 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-182414-10178-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-182414-10178-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 6e35a3e feat(cart): add cart state and review UI
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - src/data/cart.tsx
+  - src/screens/auth/types.ts
+  - src/screens/cart/CartScreen.tsx
+  - src/screens/menu/MenuScreen.tsx
+  - src/screens/menu/ProductDetailScreen.tsx
+- What was implemented
+  - Added cart context with totals and item updates, plus Cart screen UI with quantity/remove controls.
+  - Wired add-to-cart flow from Product Detail and cart access from the Menu header.
+  - Verified totals update after removal in web UI (screenshots in /Users/ynadonaire/.codex/skills/dev-browser/tmp/).
+- **Learnings for future iterations:**
+  - Expo web in non-interactive mode needs an explicit port (used `npm run web -- --port 8084`).
+  - React Native web Alerts can require explicit dialog handling in automation.
+---
