@@ -226,3 +226,31 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-000
   - Gotchas encountered: `expo start --web` ignores `--non-interactive`, use `CI=1`.
   - Useful context: dev-browser server was already running on port 9222.
 ---
+## [2026-01-23 01:16:45] - US-023: Rewards dashboard + earning rules
+Thread: 
+Run: 20260123-010538-59539 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-010538-59539-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-010538-59539-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 57adf89 feat(rewards): add rewards dashboard
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 npm run web -- --port 8084 -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - seeds/reward_transactions.json
+  - seeds/rewards_rules.json
+  - src/data/seedLoader.ts
+  - src/models/types.ts
+  - src/screens/rewards/RewardsScreen.tsx
+- What was implemented: Added rewards dashboard UI with points, tier progress, earning rate, and activity computed from reward rules and transactions; added rewards seed data and loader support. Browser check screenshot at /Users/ynadonaire/.codex/skills/dev-browser/tmp/rewards.png.
+- **Learnings for future iterations:**
+  - Patterns discovered: Rewards UI follows existing card-based styling in other screens.
+  - Gotchas encountered: Expo web dev server needed explicit --port in CI mode when 8081 was busy.
+  - Useful context: Rewards rules and transactions are now seeded for deterministic points calculations.
+---
