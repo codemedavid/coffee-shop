@@ -89,3 +89,28 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-173
   - Gotchas encountered: nested Pressable taps should stop propagation to avoid unintended navigation
   - Useful context: CI=1 is required for Expo web to bypass interactive port prompts
 ---
+## [2026-01-22 18:20:55] - US-013: Quantity + special instructions
+Thread: 
+Run: 20260122-181114-5416 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-181114-5416-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260122-181114-5416-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 65baaf7 feat(product-detail): add quantity and notes
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 EXPO_DEV_SERVER_PORT=8083 npm run web -- --port 8083 -> PASS
+- Files changed:
+  - /Users/ynadonaire/Documents/coffee-app/.agents/tasks/prd-coffee.json
+  - /Users/ynadonaire/Documents/coffee-app/src/screens/menu/ProductDetailScreen.tsx
+  - /Users/ynadonaire/Documents/coffee-app/AGENTS.md
+  - /Users/ynadonaire/Documents/coffee-app/.ralph/progress.md
+- What was implemented: Added quantity controls with per-item pricing, total updates, and special instructions input on Product Detail; browser verified with screenshot at /Users/ynadonaire/.codex/skills/dev-browser/tmp/us-013-quantity-notes.png.
+- **Learnings for future iterations:**
+  - Patterns discovered: Expo web runs cleanly on port 8083 with CI=1 when 8081 is occupied.
+  - Gotchas encountered: expo start --web prompts for a new port without CI mode.
+  - Useful context: Activity logging helper was missing, so manual entries were appended.
+---
