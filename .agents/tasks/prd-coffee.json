@@ -402,7 +402,7 @@
     {
       "id": "US-004",
       "title": "Auth screens (Welcome/Login/OTP/Register/Forgot)",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-002"
       ],
@@ -413,13 +413,13 @@
         "Negative: submit allowed with empty input"
       ],
       "startedAt": "2026-01-22T07:41:20.523265+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-22T07:41:20.523519+00:00"
+      "completedAt": "2026-01-22T07:57:43.608971+00:00",
+      "updatedAt": "2026-01-22T07:57:43.608732+00:00"
     },
     {
       "id": "US-005",
       "title": "Auth validation rules",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-004"
       ],
@@ -428,12 +428,15 @@
         "Implement validators for phone/email/OTP length",
         "Example: invalid email shows inline error",
         "Negative: invalid phone continues to OTP"
-      ]
+      ],
+      "startedAt": "2026-01-22T07:57:45.857188+00:00",
+      "completedAt": "2026-01-22T08:04:06.347982+00:00",
+      "updatedAt": "2026-01-22T08:04:06.347766+00:00"
     },
     {
       "id": "US-006",
       "title": "Mock OTP request + verify",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-005"
       ],
@@ -442,7 +445,10 @@
         "Mock service returns OTP token + expiry",
         "Example: correct OTP transitions to Home",
         "Negative: expired OTP shows error and blocks login"
-      ]
+      ],
+      "startedAt": "2026-01-22T08:04:08.550536+00:00",
+      "completedAt": "2026-01-22T08:07:58.672607+00:00",
+      "updatedAt": "2026-01-22T08:07:58.672414+00:00"
     },
     {
       "id": "US-007",
@@ -457,7 +463,8 @@
         "Render banner, featured carousel, categories list",
         "Example: featured section shows seeded items",
         "Negative: empty featured list shows empty state"
-      ]
+      ],
+      "updatedAt": "2026-01-22T08:08:00.878301+00:00"
     },
     {
       "id": "US-008",
