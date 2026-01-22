@@ -402,7 +402,7 @@
     {
       "id": "US-004",
       "title": "Auth screens (Welcome/Login/OTP/Register/Forgot)",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-002"
       ],
@@ -411,7 +411,10 @@
         "Create screens with form fields and error states",
         "Example: Login screen shows phone/email + continue button",
         "Negative: submit allowed with empty input"
-      ]
+      ],
+      "startedAt": "2026-01-22T07:41:20.523265+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-22T07:41:20.523519+00:00"
     },
     {
       "id": "US-005",

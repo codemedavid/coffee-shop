@@ -2,6 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import WelcomeScreen from './src/screens/auth/WelcomeScreen';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import RegisterScreen from './src/screens/auth/RegisterScreen';
+import ForgotScreen from './src/screens/auth/ForgotScreen';
+import OtpScreen from './src/screens/auth/OtpScreen';
+import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
   Home: undefined;
@@ -12,6 +19,7 @@ type RootTabParamList = {
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 const ScreenPlaceholder = ({ title }: { title: string }) => (
   <View style={styles.container}>
@@ -19,36 +27,69 @@ const ScreenPlaceholder = ({ title }: { title: string }) => (
   </View>
 );
 
+function MainTabs() {
+  return (
+    <Tab.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
+      <Tab.Screen
+        name="Home"
+        options={{ title: 'Home' }}
+        children={() => <ScreenPlaceholder title="Home" />}
+      />
+      <Tab.Screen
+        name="Menu"
+        options={{ title: 'Menu' }}
+        children={() => <ScreenPlaceholder title="Menu" />}
+      />
+      <Tab.Screen
+        name="Orders"
+        options={{ title: 'Orders' }}
+        children={() => <ScreenPlaceholder title="Orders" />}
+      />
+      <Tab.Screen
+        name="Rewards"
+        options={{ title: 'Rewards' }}
+        children={() => <ScreenPlaceholder title="Rewards" />}
+      />
+      <Tab.Screen
+        name="Profile"
+        options={{ title: 'Profile' }}
+        children={() => <ScreenPlaceholder title="Profile" />}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
-        <Tab.Screen
-          name="Home"
-          options={{ title: 'Home' }}
-          children={() => <ScreenPlaceholder title="Home" />}
+      <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
+        <RootStack.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
         />
-        <Tab.Screen
-          name="Menu"
-          options={{ title: 'Menu' }}
-          children={() => <ScreenPlaceholder title="Menu" />}
+        <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+        <RootStack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ title: 'Create account' }}
         />
-        <Tab.Screen
-          name="Orders"
-          options={{ title: 'Orders' }}
-          children={() => <ScreenPlaceholder title="Orders" />}
+        <RootStack.Screen
+          name="Forgot"
+          component={ForgotScreen}
+          options={{ title: 'Reset access' }}
         />
-        <Tab.Screen
-          name="Rewards"
-          options={{ title: 'Rewards' }}
-          children={() => <ScreenPlaceholder title="Rewards" />}
+        <RootStack.Screen
+          name="OTP"
+          component={OtpScreen}
+          options={{ title: 'Verify OTP' }}
         />
-        <Tab.Screen
-          name="Profile"
-          options={{ title: 'Profile' }}
-          children={() => <ScreenPlaceholder title="Profile" />}
+        <RootStack.Screen
+          name="MainTabs"
+          component={MainTabs}
+          options={{ headerShown: false }}
         />
-      </Tab.Navigator>
+      </RootStack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
   );
