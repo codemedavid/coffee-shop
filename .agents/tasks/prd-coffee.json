@@ -781,7 +781,7 @@
     {
       "id": "US-026",
       "title": "Address management",
-      "status": "in_progress",
+      "status": "done",
       "dependsOn": [
         "US-025"
       ],
@@ -792,8 +792,8 @@
         "Negative: delete removes the only default without fallback"
       ],
       "startedAt": "2026-01-23T06:17:36.538338+00:00",
-      "completedAt": null,
-      "updatedAt": "2026-01-23T06:17:36.538508+00:00"
+      "completedAt": "2026-01-23T06:34:10.920702+00:00",
+      "updatedAt": "2026-01-23T06:34:10.920457+00:00"
     },
     {
       "id": "US-027",
