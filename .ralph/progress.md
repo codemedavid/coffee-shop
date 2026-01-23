@@ -282,3 +282,35 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-140
   - Gotchas encountered: `CI=1 npm run web` keeps Metro alive; run in background for browser checks.
   - Useful context: Marketing opt-in persistence is stored under `@coffee/profile` in AsyncStorage.
 ---
+## [2026-01-23 14:32:36] - US-026: Address management
+Thread: 
+Run: 20260123-141736-89771 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-141736-89771-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-141736-89771-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 7194bd1 feat(addresses): add address management flow
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: npm run web -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - src/data/addresses.tsx
+  - src/models/types.ts
+  - src/screens/auth/types.ts
+  - src/screens/cart/CheckoutScreen.tsx
+  - src/screens/profile/AddressesScreen.tsx
+  - src/screens/profile/ProfileScreen.tsx
+- What was implemented
+  - Added address storage with default enforcement and async persistence for delivery addresses.
+  - Built the addresses management screen and linked it from Profile.
+  - Wired checkout to use saved addresses with the default preselected and a manage link.
+- **Learnings for future iterations:**
+  - Expo web server runs on port 8081 and may need a restart after changes.
+  - Default address normalization avoids missing default after edits or deletes.
+  - Browser verification screenshots saved in /Users/ynadonaire/.codex/skills/dev-browser/tmp/.
+---
