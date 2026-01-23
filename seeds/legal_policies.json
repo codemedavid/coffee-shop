@@ -1,0 +1,17 @@
+[
+  {
+    "id": "policy_001",
+    "title": "Privacy policy",
+    "body": "We only collect information needed to fulfill your orders and improve the app experience."
+  },
+  {
+    "id": "policy_002",
+    "title": "Terms of service",
+    "body": "Orders are subject to store availability, and pricing may vary by location."
+  },
+  {
+    "id": "policy_003",
+    "title": "Refunds and cancellations",
+    "body": "Contact support within 30 minutes of order placement for eligible cancellations."
+  }
+]

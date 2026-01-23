@@ -104,6 +104,18 @@ export interface Notification {
   createdAt: string;
 }
 
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export interface LegalPolicy {
+  id: string;
+  title: string;
+  body: string;
+}
+
 export interface UserPreferences {
   marketingOptIn: boolean;
   orderUpdates: boolean;

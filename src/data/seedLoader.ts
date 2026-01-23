@@ -1,6 +1,8 @@
 import type {
   MenuItem,
   Notification,
+  FaqItem,
+  LegalPolicy,
   OrderStatusUpdate,
   PaymentMethod,
   RewardRule,
@@ -77,6 +79,28 @@ export const loadRewardTransactions = (): SeedRewardTransaction[] =>
 
 export const loadNotifications = (): Notification[] =>
   safeLoad(() => require('../../seeds/notifications.json') as Notification[]);
+
+const safeLoadWithError = <T>(loader: () => T[]) => {
+  try {
+    const data = loader();
+    if (!Array.isArray(data)) {
+      return { items: [] as T[], hasError: true };
+    }
+    return { items: data, hasError: false };
+  } catch {
+    return { items: [] as T[], hasError: true };
+  }
+};
+
+export const loadFaqs = () =>
+  safeLoadWithError(
+    () => require('../../seeds/faq.json') as FaqItem[],
+  );
+
+export const loadLegalPolicies = () =>
+  safeLoadWithError(
+    () => require('../../seeds/legal_policies.json') as LegalPolicy[],
+  );
 
 export const loadSeedData = () => ({
   users: loadUsers(),

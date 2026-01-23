@@ -1,0 +1,17 @@
+[
+  {
+    "id": "faq_001",
+    "question": "How do I track my order?",
+    "answer": "Open the Orders tab to see live status updates for pickup or delivery."
+  },
+  {
+    "id": "faq_002",
+    "question": "Can I customize sweetness and ice?",
+    "answer": "Yes. Choose size, sugar, and add-ons on the product detail screen before adding to cart."
+  },
+  {
+    "id": "faq_003",
+    "question": "What payment methods are supported?",
+    "answer": "You can pay with saved cards, wallet balance, or cash on delivery where available."
+  }
+]

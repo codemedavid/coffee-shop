@@ -23,6 +23,8 @@ import RewardsScreen from './src/screens/rewards/RewardsScreen';
 import ProfileScreen from './src/screens/profile/ProfileScreen';
 import AddressesScreen from './src/screens/profile/AddressesScreen';
 import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
+import FaqScreen from './src/screens/faq/FaqScreen';
+import PoliciesScreen from './src/screens/faq/PoliciesScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -140,6 +142,16 @@ export default function App() {
                     name="Notifications"
                     component={NotificationsScreen}
                     options={{ title: 'Notifications' }}
+                  />
+                  <RootStack.Screen
+                    name="Faq"
+                    component={FaqScreen}
+                    options={{ title: 'FAQ' }}
+                  />
+                  <RootStack.Screen
+                    name="Policies"
+                    component={PoliciesScreen}
+                    options={{ title: 'Policies' }}
                   />
                 </RootStack.Navigator>
                 <StatusBar style="auto" />

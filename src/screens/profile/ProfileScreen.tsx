@@ -214,6 +214,40 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Help & legal</Text>
+          <Pressable
+            onPress={() => navigation.navigate('Faq')}
+            style={({ pressed }) => [
+              styles.linkRow,
+              pressed && styles.linkRowPressed,
+            ]}
+          >
+            <View>
+              <Text style={styles.linkTitle}>FAQs</Text>
+              <Text style={styles.linkSubtitle}>
+                Answers to common questions.
+              </Text>
+            </View>
+            <Text style={styles.linkArrow}>›</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('Policies')}
+            style={({ pressed }) => [
+              styles.linkRow,
+              pressed && styles.linkRowPressed,
+            ]}
+          >
+            <View>
+              <Text style={styles.linkTitle}>Policies</Text>
+              <Text style={styles.linkSubtitle}>
+                Privacy, terms, and refunds.
+              </Text>
+            </View>
+            <Text style={styles.linkArrow}>›</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>
 
           <View style={styles.preferenceRow}>
