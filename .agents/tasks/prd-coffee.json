@@ -798,7 +798,7 @@
     {
       "id": "US-027",
       "title": "Notifications inbox + deep links",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-020"
       ],
@@ -807,7 +807,10 @@
         "Inbox shows notifications in reverse chronological order",
         "Example: tapping order notification opens Order Status",
         "Negative: invalid deep link crashes app"
-      ]
+      ],
+      "startedAt": "2026-01-23T06:34:51.630381+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-23T06:34:51.630630+00:00"
     },
     {
       "id": "US-028",

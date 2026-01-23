@@ -56,4 +56,5 @@ export type RootStackParamList = {
       }
     | undefined;
   Addresses: undefined;
+  Notifications: undefined;
 };

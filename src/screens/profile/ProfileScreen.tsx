@@ -195,6 +195,25 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Updates</Text>
+          <Pressable
+            onPress={() => navigation.navigate('Notifications')}
+            style={({ pressed }) => [
+              styles.linkRow,
+              pressed && styles.linkRowPressed,
+            ]}
+          >
+            <View>
+              <Text style={styles.linkTitle}>Notifications inbox</Text>
+              <Text style={styles.linkSubtitle}>
+                View order alerts and promotions.
+              </Text>
+            </View>
+            <Text style={styles.linkArrow}>›</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>
 
           <View style={styles.preferenceRow}>

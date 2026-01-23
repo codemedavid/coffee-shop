@@ -22,6 +22,7 @@ import OrderStatusScreen from './src/screens/orders/OrderStatusScreen';
 import RewardsScreen from './src/screens/rewards/RewardsScreen';
 import ProfileScreen from './src/screens/profile/ProfileScreen';
 import AddressesScreen from './src/screens/profile/AddressesScreen';
+import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -134,6 +135,11 @@ export default function App() {
                     name="Addresses"
                     component={AddressesScreen}
                     options={{ title: 'Addresses' }}
+                  />
+                  <RootStack.Screen
+                    name="Notifications"
+                    component={NotificationsScreen}
+                    options={{ title: 'Notifications' }}
                   />
                 </RootStack.Navigator>
                 <StatusBar style="auto" />

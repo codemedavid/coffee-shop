@@ -96,6 +96,14 @@ export interface RewardTransaction {
   points?: number;
 }
 
+export interface Notification {
+  id: string;
+  title: string;
+  body: string;
+  deepLink?: string;
+  createdAt: string;
+}
+
 export interface UserPreferences {
   marketingOptIn: boolean;
   orderUpdates: boolean;

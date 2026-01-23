@@ -1,5 +1,6 @@
 import type {
   MenuItem,
+  Notification,
   OrderStatusUpdate,
   PaymentMethod,
   RewardRule,
@@ -74,6 +75,9 @@ export const loadRewardTransactions = (): SeedRewardTransaction[] =>
       require('../../seeds/reward_transactions.json') as SeedRewardTransaction[],
   );
 
+export const loadNotifications = (): Notification[] =>
+  safeLoad(() => require('../../seeds/notifications.json') as Notification[]);
+
 export const loadSeedData = () => ({
   users: loadUsers(),
   stores: loadStores(),
@@ -83,4 +87,5 @@ export const loadSeedData = () => ({
   orderStatusUpdates: loadOrderStatusUpdates(),
   rewardRules: loadRewardRules(),
   rewardTransactions: loadRewardTransactions(),
+  notifications: loadNotifications(),
 });

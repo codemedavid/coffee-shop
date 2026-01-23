@@ -1,0 +1,30 @@
+[
+  {
+    "id": "notif_001",
+    "title": "Order ready for pickup",
+    "body": "Order ord_seed_1002 is ready at Zus SS2.",
+    "deepLink": "orderStatus/ord_seed_1002",
+    "createdAt": "2026-01-23T13:35:00.000Z"
+  },
+  {
+    "id": "notif_002",
+    "title": "Order confirmation",
+    "body": "We received your order ord_seed_1001.",
+    "deepLink": "order/ord_seed_1001",
+    "createdAt": "2026-01-23T11:10:00.000Z"
+  },
+  {
+    "id": "notif_003",
+    "title": "Rewards boost",
+    "body": "Earn double points this weekend.",
+    "deepLink": "rewards",
+    "createdAt": "2026-01-23T08:15:00.000Z"
+  },
+  {
+    "id": "notif_004",
+    "title": "Message unavailable",
+    "body": "This link is no longer available.",
+    "deepLink": "orderStatus",
+    "createdAt": "2026-01-22T18:05:00.000Z"
+  }
+]
