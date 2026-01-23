@@ -346,3 +346,30 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-143
   - Expo web runs on http://localhost:8081 in CI mode; keep logs for validation.
   - Dev-browser server requires redirecting output to a file to avoid EPIPE.
 ---
+## [2026-01-23 15:51:50] - US-029: Order rating and feedback
+Thread: 
+Run: 20260123-154143-10340 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-154143-10340-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-154143-10340-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 2f0f4cb feat(orders): add order rating prompt
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 npm run web -- --port 8082 -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - src/models/types.ts
+  - src/screens/orders/OrderStatusScreen.tsx
+  - src/data/orderRatings.tsx
+- What was implemented
+  - Added local order rating storage and completed-order prompt with feedback input on the order status screen; verified in browser (screenshot: /Users/ynadonaire/.codex/skills/dev-browser/tmp/order-rating.png).
+- **Learnings for future iterations:**
+  - Patterns discovered: order status updates fall back to order.status when no updates exist, enabling completed-order prompts.
+  - Gotchas encountered: port 8081 already in use; run web on 8082 in CI mode.
+  - Useful context: notifications deep links can open completed orders for rating verification.
+---
