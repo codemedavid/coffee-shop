@@ -84,3 +84,16 @@ export interface RewardTransaction {
   amount?: number;
   points?: number;
 }
+
+export interface UserPreferences {
+  marketingOptIn: boolean;
+  orderUpdates: boolean;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  preferences: UserPreferences;
+}

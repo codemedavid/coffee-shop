@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,11 +13,13 @@ import ProductDetailScreen from './src/screens/menu/ProductDetailScreen';
 import { FavoritesProvider } from './src/data/favorites';
 import { CartProvider } from './src/data/cart';
 import { OrderHistoryProvider } from './src/data/orderHistory';
+import { ProfileProvider } from './src/data/profile';
 import CartScreen from './src/screens/cart/CartScreen';
 import CheckoutScreen from './src/screens/cart/CheckoutScreen';
 import OrderConfirmationScreen from './src/screens/cart/OrderConfirmationScreen';
 import OrderStatusScreen from './src/screens/orders/OrderStatusScreen';
 import RewardsScreen from './src/screens/rewards/RewardsScreen';
+import ProfileScreen from './src/screens/profile/ProfileScreen';
 import type { RootStackParamList } from './src/screens/auth/types';
 
 type RootTabParamList = {
@@ -31,12 +32,6 @@ type RootTabParamList = {
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const RootStack = createNativeStackNavigator<RootStackParamList>();
-
-const ScreenPlaceholder = ({ title }: { title: string }) => (
-  <View style={styles.container}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
 
 function MainTabs() {
   return (
@@ -64,7 +59,7 @@ function MainTabs() {
       <Tab.Screen
         name="Profile"
         options={{ title: 'Profile' }}
-        children={() => <ScreenPlaceholder title="Profile" />}
+        component={ProfileScreen}
       />
     </Tab.Navigator>
   );
@@ -73,82 +68,71 @@ function MainTabs() {
 export default function App() {
   return (
     <FavoritesProvider>
-      <CartProvider>
-        <OrderHistoryProvider>
-          <NavigationContainer>
-            <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
-              <RootStack.Screen
-                name="Welcome"
-                component={WelcomeScreen}
-                options={{ headerShown: false }}
-              />
-              <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-              <RootStack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={{ title: 'Create account' }}
-              />
-              <RootStack.Screen
-                name="Forgot"
-                component={ForgotScreen}
-                options={{ title: 'Reset access' }}
-              />
-              <RootStack.Screen
-                name="OTP"
-                component={OtpScreen}
-                options={{ title: 'Verify OTP' }}
-              />
-              <RootStack.Screen
-                name="MainTabs"
-                component={MainTabs}
-                options={{ headerShown: false }}
-              />
-              <RootStack.Screen
-                name="ProductDetail"
-                component={ProductDetailScreen}
-                options={{ title: 'Product detail' }}
-              />
-              <RootStack.Screen
-                name="Cart"
-                component={CartScreen}
-                options={{ title: 'Cart' }}
-              />
-              <RootStack.Screen
-                name="Checkout"
-                component={CheckoutScreen}
-                options={{ title: 'Checkout' }}
-              />
-              <RootStack.Screen
-                name="OrderConfirmation"
-                component={OrderConfirmationScreen}
-                options={{ title: 'Order confirmation' }}
-              />
-              <RootStack.Screen
-                name="OrderStatus"
-                options={{ title: 'Order status' }}
-              >
-                {(props) => (
-                  <OrderStatusScreen order={props.route.params?.order} />
-                )}
-              </RootStack.Screen>
-            </RootStack.Navigator>
-            <StatusBar style="auto" />
-          </NavigationContainer>
-        </OrderHistoryProvider>
-      </CartProvider>
+      <ProfileProvider>
+        <CartProvider>
+          <OrderHistoryProvider>
+            <NavigationContainer>
+              <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
+                <RootStack.Screen
+                  name="Welcome"
+                  component={WelcomeScreen}
+                  options={{ headerShown: false }}
+                />
+                <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+                <RootStack.Screen
+                  name="Register"
+                  component={RegisterScreen}
+                  options={{ title: 'Create account' }}
+                />
+                <RootStack.Screen
+                  name="Forgot"
+                  component={ForgotScreen}
+                  options={{ title: 'Reset access' }}
+                />
+                <RootStack.Screen
+                  name="OTP"
+                  component={OtpScreen}
+                  options={{ title: 'Verify OTP' }}
+                />
+                <RootStack.Screen
+                  name="MainTabs"
+                  component={MainTabs}
+                  options={{ headerShown: false }}
+                />
+                <RootStack.Screen
+                  name="ProductDetail"
+                  component={ProductDetailScreen}
+                  options={{ title: 'Product detail' }}
+                />
+                <RootStack.Screen
+                  name="Cart"
+                  component={CartScreen}
+                  options={{ title: 'Cart' }}
+                />
+                <RootStack.Screen
+                  name="Checkout"
+                  component={CheckoutScreen}
+                  options={{ title: 'Checkout' }}
+                />
+                <RootStack.Screen
+                  name="OrderConfirmation"
+                  component={OrderConfirmationScreen}
+                  options={{ title: 'Order confirmation' }}
+                />
+                <RootStack.Screen
+                  name="OrderStatus"
+                  options={{ title: 'Order status' }}
+                >
+                  {(props) => (
+                    <OrderStatusScreen order={props.route.params?.order} />
+                  )}
+                </RootStack.Screen>
+              </RootStack.Navigator>
+              <StatusBar style="auto" />
+            </NavigationContainer>
+          </OrderHistoryProvider>
+        </CartProvider>
+      </ProfileProvider>
     </FavoritesProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-});
