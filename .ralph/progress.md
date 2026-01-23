@@ -314,3 +314,35 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-141
   - Default address normalization avoids missing default after edits or deletes.
   - Browser verification screenshots saved in /Users/ynadonaire/.codex/skills/dev-browser/tmp/.
 ---
+## [2026-01-23 14:43:11] - US-027: Notifications inbox + deep links
+Thread: 
+Run: 20260123-143451-95908 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-143451-95908-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-143451-95908-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: 365be27 feat(notifications): add inbox deep links
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 npm run web -> PASS
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - seeds/notifications.json
+  - src/data/seedLoader.ts
+  - src/models/types.ts
+  - src/screens/auth/types.ts
+  - src/screens/notifications/NotificationsScreen.tsx
+  - src/screens/profile/ProfileScreen.tsx
+- What was implemented
+  - Added notifications seed/model support and an inbox screen sorted by newest first with safe deep link parsing.
+  - Wired Profile -> Notifications navigation and order notification taps to Order Status with graceful invalid-link alerts.
+  - Browser-verified inbox and order-status navigation (screenshots in /Users/ynadonaire/.codex/skills/dev-browser/tmp/notifications.png and /Users/ynadonaire/.codex/skills/dev-browser/tmp/order-status-from-notification.png).
+- **Learnings for future iterations:**
+  - Deep links should tolerate missing IDs and unknown routes without navigation.
+  - Expo web runs on http://localhost:8081 in CI mode; keep logs for validation.
+  - Dev-browser server requires redirecting output to a file to avoid EPIPE.
+---
