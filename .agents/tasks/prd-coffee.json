@@ -746,7 +746,7 @@
     {
       "id": "US-024",
       "title": "Rewards redemption at checkout",
-      "status": "open",
+      "status": "done",
       "dependsOn": [
         "US-023",
         "US-017"
@@ -757,7 +757,9 @@
         "Example: max redemption enforced",
         "Negative: redemption allowed with zero points"
       ],
-      "updatedAt": "2026-01-22T17:25:09.287131+00:00"
+      "updatedAt": "2026-01-23T06:01:44.865488+00:00",
+      "startedAt": "2026-01-23T05:40:46.195039+00:00",
+      "completedAt": "2026-01-23T06:01:44.865665+00:00"
     },
     {
       "id": "US-025",
