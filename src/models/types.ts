@@ -60,6 +60,13 @@ export interface OrderStatusUpdate {
   timestamp: string;
 }
 
+export interface OrderRating {
+  orderId: string;
+  rating: number;
+  feedback?: string;
+  createdAt: string;
+}
+
 export interface PaymentMethod {
   id: string;
   type: 'card' | 'wallet' | 'cash';

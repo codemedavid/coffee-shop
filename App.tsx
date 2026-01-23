@@ -13,6 +13,7 @@ import ProductDetailScreen from './src/screens/menu/ProductDetailScreen';
 import { FavoritesProvider } from './src/data/favorites';
 import { CartProvider } from './src/data/cart';
 import { OrderHistoryProvider } from './src/data/orderHistory';
+import { OrderRatingsProvider } from './src/data/orderRatings';
 import { ProfileProvider } from './src/data/profile';
 import { AddressesProvider } from './src/data/addresses';
 import CartScreen from './src/screens/cart/CartScreen';
@@ -77,85 +78,87 @@ export default function App() {
         <AddressesProvider>
           <CartProvider>
             <OrderHistoryProvider>
-              <NavigationContainer>
-                <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
-                  <RootStack.Screen
-                    name="Welcome"
-                    component={WelcomeScreen}
-                    options={{ headerShown: false }}
-                  />
-                  <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-                  <RootStack.Screen
-                    name="Register"
-                    component={RegisterScreen}
-                    options={{ title: 'Create account' }}
-                  />
-                  <RootStack.Screen
-                    name="Forgot"
-                    component={ForgotScreen}
-                    options={{ title: 'Reset access' }}
-                  />
-                  <RootStack.Screen
-                    name="OTP"
-                    component={OtpScreen}
-                    options={{ title: 'Verify OTP' }}
-                  />
-                  <RootStack.Screen
-                    name="MainTabs"
-                    component={MainTabs}
-                    options={{ headerShown: false }}
-                  />
-                  <RootStack.Screen
-                    name="ProductDetail"
-                    component={ProductDetailScreen}
-                    options={{ title: 'Product detail' }}
-                  />
-                  <RootStack.Screen
-                    name="Cart"
-                    component={CartScreen}
-                    options={{ title: 'Cart' }}
-                  />
-                  <RootStack.Screen
-                    name="Checkout"
-                    component={CheckoutScreen}
-                    options={{ title: 'Checkout' }}
-                  />
-                  <RootStack.Screen
-                    name="OrderConfirmation"
-                    component={OrderConfirmationScreen}
-                    options={{ title: 'Order confirmation' }}
-                  />
-                  <RootStack.Screen
-                    name="OrderStatus"
-                    options={{ title: 'Order status' }}
-                  >
-                    {(props) => (
-                      <OrderStatusScreen order={props.route.params?.order} />
-                    )}
-                  </RootStack.Screen>
-                  <RootStack.Screen
-                    name="Addresses"
-                    component={AddressesScreen}
-                    options={{ title: 'Addresses' }}
-                  />
-                  <RootStack.Screen
-                    name="Notifications"
-                    component={NotificationsScreen}
-                    options={{ title: 'Notifications' }}
-                  />
-                  <RootStack.Screen
-                    name="Faq"
-                    component={FaqScreen}
-                    options={{ title: 'FAQ' }}
-                  />
-                  <RootStack.Screen
-                    name="Policies"
-                    component={PoliciesScreen}
-                    options={{ title: 'Policies' }}
-                  />
-                </RootStack.Navigator>
-                <StatusBar style="auto" />
-              </NavigationContainer>
+              <OrderRatingsProvider>
+                <NavigationContainer>
+                  <RootStack.Navigator screenOptions={{ headerTitleAlign: 'center' }}>
+                    <RootStack.Screen
+                      name="Welcome"
+                      component={WelcomeScreen}
+                      options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+                    <RootStack.Screen
+                      name="Register"
+                      component={RegisterScreen}
+                      options={{ title: 'Create account' }}
+                    />
+                    <RootStack.Screen
+                      name="Forgot"
+                      component={ForgotScreen}
+                      options={{ title: 'Reset access' }}
+                    />
+                    <RootStack.Screen
+                      name="OTP"
+                      component={OtpScreen}
+                      options={{ title: 'Verify OTP' }}
+                    />
+                    <RootStack.Screen
+                      name="MainTabs"
+                      component={MainTabs}
+                      options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                      name="ProductDetail"
+                      component={ProductDetailScreen}
+                      options={{ title: 'Product detail' }}
+                    />
+                    <RootStack.Screen
+                      name="Cart"
+                      component={CartScreen}
+                      options={{ title: 'Cart' }}
+                    />
+                    <RootStack.Screen
+                      name="Checkout"
+                      component={CheckoutScreen}
+                      options={{ title: 'Checkout' }}
+                    />
+                    <RootStack.Screen
+                      name="OrderConfirmation"
+                      component={OrderConfirmationScreen}
+                      options={{ title: 'Order confirmation' }}
+                    />
+                    <RootStack.Screen
+                      name="OrderStatus"
+                      options={{ title: 'Order status' }}
+                    >
+                      {(props) => (
+                        <OrderStatusScreen order={props.route.params?.order} />
+                      )}
+                    </RootStack.Screen>
+                    <RootStack.Screen
+                      name="Addresses"
+                      component={AddressesScreen}
+                      options={{ title: 'Addresses' }}
+                    />
+                    <RootStack.Screen
+                      name="Notifications"
+                      component={NotificationsScreen}
+                      options={{ title: 'Notifications' }}
+                    />
+                    <RootStack.Screen
+                      name="Faq"
+                      component={FaqScreen}
+                      options={{ title: 'FAQ' }}
+                    />
+                    <RootStack.Screen
+                      name="Policies"
+                      component={PoliciesScreen}
+                      options={{ title: 'Policies' }}
+                    />
+                  </RootStack.Navigator>
+                  <StatusBar style="auto" />
+                </NavigationContainer>
+              </OrderRatingsProvider>
             </OrderHistoryProvider>
           </CartProvider>
         </AddressesProvider>

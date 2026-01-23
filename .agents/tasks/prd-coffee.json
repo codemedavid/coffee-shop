@@ -832,7 +832,7 @@
     {
       "id": "US-029",
       "title": "Order rating and feedback",
-      "status": "open",
+      "status": "in_progress",
       "dependsOn": [
         "US-020"
       ],
@@ -841,7 +841,10 @@
         "Rating prompt appears after completed order",
         "Example: rating saves to local store",
         "Negative: rating allowed for non-completed order"
-      ]
+      ],
+      "startedAt": "2026-01-23T07:41:43.794756+00:00",
+      "completedAt": null,
+      "updatedAt": "2026-01-23T07:41:43.794914+00:00"
     }
   ]
 }

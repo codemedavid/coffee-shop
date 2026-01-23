@@ -1,6 +1,15 @@
-import React, { useMemo } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { loadOrderStatusUpdates } from '../../data/seedLoader';
+import { useOrderRatings } from '../../data/orderRatings';
 import type { Order, OrderStatus, OrderStatusUpdate } from '../../models/types';
 
 const STATUS_STEPS: {
@@ -70,6 +79,7 @@ type Props = {
 };
 
 export default function OrderStatusScreen({ order }: Props) {
+  const { ratings, saveRating } = useOrderRatings();
   const activeOrder = order ?? seededOrder;
   const statusUpdates = useMemo(
     () =>
@@ -97,6 +107,45 @@ export default function OrderStatusScreen({ order }: Props) {
   );
   const hasStatus = statusIndex >= 0;
   const showFallback = statusUpdates.length === 0;
+  const isCompleted = latestStatus === 'completed';
+  const storedRating = ratings[activeOrder.id];
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (storedRating) {
+      setSelectedRating(storedRating.rating);
+      setFeedback(storedRating.feedback ?? '');
+    } else {
+      setSelectedRating(null);
+      setFeedback('');
+    }
+    setSubmitError(null);
+    setIsSubmitting(false);
+  }, [activeOrder.id, storedRating]);
+
+  const handleSubmit = async () => {
+    if (selectedRating === null) {
+      setSubmitError('Select a rating before submitting.');
+      return;
+    }
+    setIsSubmitting(true);
+    const result = await saveRating({
+      orderId: activeOrder.id,
+      rating: selectedRating,
+      feedback,
+      status: latestStatus,
+    });
+    if (!result.ok) {
+      setSubmitError(result.message);
+      setIsSubmitting(false);
+      return;
+    }
+    setSubmitError(null);
+    setIsSubmitting(false);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -173,6 +222,87 @@ export default function OrderStatusScreen({ order }: Props) {
             );
           })}
         </View>
+        {isCompleted ? (
+          <View style={styles.ratingCard}>
+            <Text style={styles.ratingTitle}>
+              {storedRating ? 'Thanks for rating' : 'Rate this order'}
+            </Text>
+            <Text style={styles.ratingSubtitle}>
+              {storedRating
+                ? 'Your feedback helps our baristas improve.'
+                : 'How was your order experience?'}
+            </Text>
+            <View style={styles.ratingRow}>
+              {[1, 2, 3, 4, 5].map((value) => {
+                const isSelected = (selectedRating ?? 0) >= value;
+                return (
+                  <Pressable
+                    key={`rating-${value}`}
+                    onPress={() => {
+                      if (storedRating) {
+                        return;
+                      }
+                      setSelectedRating(value);
+                      setSubmitError(null);
+                    }}
+                    disabled={!!storedRating}
+                    style={({ pressed }) => [
+                      styles.ratingStar,
+                      isSelected && styles.ratingStarSelected,
+                      pressed && !storedRating && styles.ratingStarPressed,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.ratingStarText,
+                        isSelected && styles.ratingStarTextSelected,
+                      ]}
+                    >
+                      {value}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <TextInput
+              value={feedback}
+              onChangeText={(text) => {
+                if (storedRating) {
+                  return;
+                }
+                setFeedback(text);
+              }}
+              editable={!storedRating}
+              placeholder="Share additional feedback (optional)"
+              style={styles.feedbackInput}
+              multiline
+              textAlignVertical="top"
+            />
+            {submitError ? (
+              <Text style={styles.errorText}>{submitError}</Text>
+            ) : null}
+            {storedRating ? (
+              <View style={styles.ratingSaved}>
+                <Text style={styles.ratingSavedText}>
+                  Saved on {formatTime(storedRating.createdAt) ?? 'just now'}
+                </Text>
+              </View>
+            ) : (
+              <Pressable
+                onPress={handleSubmit}
+                disabled={isSubmitting}
+                style={({ pressed }) => [
+                  styles.ratingButton,
+                  (pressed || isSubmitting) && styles.ratingButtonPressed,
+                ]}
+              >
+                <Text style={styles.ratingButtonText}>
+                  {isSubmitting ? 'Saving...' : 'Submit rating'}
+                </Text>
+              </Pressable>
+            )}
+          </View>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -314,5 +444,98 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 11,
     color: '#a08f83',
+  },
+  ratingCard: {
+    marginTop: 18,
+    backgroundColor: '#fff7ee',
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#f3e2cf',
+  },
+  ratingTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  ratingSubtitle: {
+    marginTop: 6,
+    fontSize: 12,
+    color: '#8b7c6f',
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    marginTop: 12,
+    gap: 8,
+  },
+  ratingStar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#d8c8b6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+  ratingStarSelected: {
+    borderColor: '#6c3f1d',
+    backgroundColor: '#f0d9c2',
+  },
+  ratingStarPressed: {
+    opacity: 0.8,
+  },
+  ratingStarText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#8b7c6f',
+  },
+  ratingStarTextSelected: {
+    color: '#6c3f1d',
+  },
+  feedbackInput: {
+    marginTop: 12,
+    minHeight: 80,
+    borderWidth: 1,
+    borderColor: '#e6d6c5',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#ffffff',
+    fontSize: 12,
+    color: '#2b1f14',
+  },
+  errorText: {
+    marginTop: 8,
+    fontSize: 11,
+    color: '#b63c2a',
+  },
+  ratingButton: {
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 999,
+    alignItems: 'center',
+    backgroundColor: '#2f2014',
+  },
+  ratingButtonPressed: {
+    opacity: 0.85,
+  },
+  ratingButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff6ed',
+  },
+  ratingSaved: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#f6eadb',
+    alignItems: 'center',
+  },
+  ratingSavedText: {
+    fontSize: 11,
+    color: '#6c3f1d',
+    fontWeight: '600',
   },
 });
