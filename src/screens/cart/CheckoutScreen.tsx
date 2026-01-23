@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { loadPaymentMethods, loadStores } from '../../data/seedLoader';
+import { loadPaymentMethods, loadStores, loadUsers } from '../../data/seedLoader';
 import { useCart } from '../../data/cart';
 import { createMockOrder } from '../../data/orders';
 import { useOrderHistory } from '../../data/orderHistory';
@@ -47,6 +47,9 @@ const addresses: Address[] = [
 
 const SLOT_INTERVAL_MINUTES = 15;
 const PICKUP_LEAD_MINUTES = 20;
+const REWARD_POINT_VALUE = 0.1;
+const REWARD_STEP_POINTS = 10;
+const MAX_REDEEM_RATE = 0.5;
 
 const formatHours = (hours: Store['hours']) => `${hours.open} - ${hours.close}`;
 
@@ -107,9 +110,14 @@ const formatPaymentMethodLabel = (method: PaymentMethod) => {
   return 'Cash';
 };
 
+const formatPoints = (points: number) => `${points} pts`;
+
+const roundCurrency = (value: number) => Math.round(value * 100) / 100;
+
 export default function CheckoutScreen() {
   const stores = useMemo(() => loadStores(), []);
   const paymentMethods = useMemo(() => loadPaymentMethods(), []);
+  const user = useMemo(() => loadUsers()[0], []);
   const defaultPaymentMethodId = useMemo(
     () => paymentMethods.find((method) => method.isDefault)?.id ?? '',
     [paymentMethods],
@@ -134,8 +142,36 @@ export default function CheckoutScreen() {
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(
     defaultPaymentMethodId,
   );
+  const [redeemedPoints, setRedeemedPoints] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const availablePoints = user?.points ?? 0;
+  const subtotalAfterPromo = Math.max(0, totals.subtotal - totals.discount);
+  const maxDiscountBySubtotal = roundCurrency(
+    subtotalAfterPromo * MAX_REDEEM_RATE,
+  );
+  const maxPointsBySubtotal = Math.floor(
+    maxDiscountBySubtotal / REWARD_POINT_VALUE,
+  );
+  const maxRedeemablePoints = Math.max(
+    0,
+    Math.min(availablePoints, maxPointsBySubtotal),
+  );
+  const maxDiscountByPoints = roundCurrency(
+    maxRedeemablePoints * REWARD_POINT_VALUE,
+  );
+  const normalizedRedeemedPoints = Math.min(
+    redeemedPoints,
+    maxRedeemablePoints,
+  );
+  const rewardsDiscount = roundCurrency(
+    Math.min(subtotalAfterPromo, normalizedRedeemedPoints * REWARD_POINT_VALUE),
+  );
+  const totalAfterRewards = Math.max(
+    0,
+    totals.subtotal + totals.fees.total - totals.discount - rewardsDiscount,
+  );
 
   const selectedStore = useMemo(
     () => pickupStores.find((store) => store.id === selectedStoreId),
@@ -171,6 +207,16 @@ export default function CheckoutScreen() {
     }
   }, [defaultPaymentMethodId, selectedPaymentMethodId]);
 
+  useEffect(() => {
+    if (redeemedPoints > maxRedeemablePoints) {
+      setRedeemedPoints(maxRedeemablePoints);
+      return;
+    }
+    if (totals.itemCount === 0 && redeemedPoints !== 0) {
+      setRedeemedPoints(0);
+    }
+  }, [maxRedeemablePoints, redeemedPoints, totals.itemCount]);
+
   const fulfillmentMissing =
     fulfillmentType === 'pickup'
       ? !selectedStore || !selectedPickupSlot
@@ -193,6 +239,8 @@ export default function CheckoutScreen() {
         ? 'No saved payment methods available.'
         : 'Select a payment method to continue.'
       : '';
+  const canRedeem =
+    totals.itemCount > 0 && availablePoints > 0 && maxRedeemablePoints > 0;
 
   const handleSubmit = async () => {
     if (!canContinue) {
@@ -221,7 +269,9 @@ export default function CheckoutScreen() {
       itemCount: totals.itemCount,
       fees: { ...totals.fees },
       discount: totals.discount,
-      total: totals.total,
+      rewardsDiscount,
+      rewardsPoints: normalizedRedeemedPoints,
+      total: totalAfterRewards,
     };
 
     const result = await createMockOrder({
@@ -230,7 +280,7 @@ export default function CheckoutScreen() {
       fulfillmentType,
       scheduledAt: fulfillmentType === 'pickup' ? selectedPickupSlot : undefined,
       items: itemsSnapshot,
-      total: totals.total,
+      total: totalAfterRewards,
     });
 
     if (!result.ok) {
@@ -481,6 +531,99 @@ export default function CheckoutScreen() {
             </View>
           )}
         </View>
+        <View style={styles.selectorCard}>
+          <View style={styles.selectorHeader}>
+            <Text style={styles.sectionTitle}>Redeem points</Text>
+            <Text style={styles.sectionHint}>
+              {availablePoints > 0
+                ? `Balance ${formatPoints(availablePoints)} · ${Math.round(
+                    1 / REWARD_POINT_VALUE,
+                  )} pts = RM 1`
+                : 'No points available yet.'}
+            </Text>
+          </View>
+          <View style={styles.rewardsMetaRow}>
+            <View>
+              <Text style={styles.rewardsMetaLabel}>Max redeemable</Text>
+              <Text style={styles.rewardsMetaValue}>
+                {formatPoints(maxRedeemablePoints)} · RM{' '}
+                {maxDiscountByPoints.toFixed(2)}
+              </Text>
+            </View>
+            <Pressable
+              onPress={() => setRedeemedPoints(maxRedeemablePoints)}
+              disabled={!canRedeem || normalizedRedeemedPoints === maxRedeemablePoints}
+              style={({ pressed }) => [
+                styles.rewardsMaxButton,
+                (!canRedeem || normalizedRedeemedPoints === maxRedeemablePoints) &&
+                  styles.rewardsMaxButtonDisabled,
+                pressed &&
+                  canRedeem &&
+                  normalizedRedeemedPoints !== maxRedeemablePoints &&
+                  styles.rewardsMaxButtonPressed,
+              ]}
+            >
+              <Text style={styles.rewardsMaxButtonText}>Use max</Text>
+            </Pressable>
+          </View>
+          <View style={styles.rewardsControlRow}>
+            <Pressable
+              onPress={() =>
+                setRedeemedPoints((prev) =>
+                  Math.max(0, prev - REWARD_STEP_POINTS),
+                )
+              }
+              disabled={!canRedeem || normalizedRedeemedPoints === 0}
+              style={({ pressed }) => [
+                styles.rewardsStepButton,
+                (!canRedeem || normalizedRedeemedPoints === 0) &&
+                  styles.rewardsStepButtonDisabled,
+                pressed &&
+                  canRedeem &&
+                  normalizedRedeemedPoints > 0 &&
+                  styles.rewardsStepButtonPressed,
+              ]}
+            >
+              <Text style={styles.rewardsStepButtonText}>- {REWARD_STEP_POINTS}</Text>
+            </Pressable>
+            <View style={styles.rewardsCenter}>
+              <Text style={styles.rewardsPointsValue}>
+                {formatPoints(normalizedRedeemedPoints)}
+              </Text>
+              <Text style={styles.rewardsDiscountValue}>
+                -RM {rewardsDiscount.toFixed(2)}
+              </Text>
+            </View>
+            <Pressable
+              onPress={() =>
+                setRedeemedPoints((prev) =>
+                  Math.min(maxRedeemablePoints, prev + REWARD_STEP_POINTS),
+                )
+              }
+              disabled={!canRedeem || normalizedRedeemedPoints === maxRedeemablePoints}
+              style={({ pressed }) => [
+                styles.rewardsStepButton,
+                (!canRedeem || normalizedRedeemedPoints === maxRedeemablePoints) &&
+                  styles.rewardsStepButtonDisabled,
+                pressed &&
+                  canRedeem &&
+                  normalizedRedeemedPoints < maxRedeemablePoints &&
+                  styles.rewardsStepButtonPressed,
+              ]}
+            >
+              <Text style={styles.rewardsStepButtonText}>+ {REWARD_STEP_POINTS}</Text>
+            </Pressable>
+          </View>
+          {availablePoints === 0 ? (
+            <Text style={styles.rewardsHint}>
+              Earn points on your next order to redeem rewards here.
+            </Text>
+          ) : maxRedeemablePoints === 0 ? (
+            <Text style={styles.rewardsHint}>
+              Add more items to unlock points redemption.
+            </Text>
+          ) : null}
+        </View>
         {requiresSelection && helperText ? (
           <Text style={styles.helperText}>{helperText}</Text>
         ) : null}
@@ -492,7 +635,7 @@ export default function CheckoutScreen() {
             <View>
               <Text style={styles.ctaLabel}>Order total</Text>
               <Text style={styles.ctaValue}>
-                RM {totals.total.toFixed(2)}
+                RM {totalAfterRewards.toFixed(2)}
               </Text>
             </View>
             <Pressable
@@ -631,6 +774,91 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 11,
     color: '#9a8776',
+  },
+  rewardsMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  rewardsMetaLabel: {
+    fontSize: 11,
+    color: '#8b7c6f',
+  },
+  rewardsMetaValue: {
+    marginTop: 4,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  rewardsMaxButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#f0d9bf',
+    backgroundColor: '#fff2db',
+  },
+  rewardsMaxButtonDisabled: {
+    backgroundColor: '#efe2d6',
+    borderColor: '#e2cdb6',
+  },
+  rewardsMaxButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  rewardsMaxButtonText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#a45c2b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  rewardsControlRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  rewardsStepButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#f1e1d0',
+    backgroundColor: '#fffefc',
+    alignItems: 'center',
+  },
+  rewardsStepButtonDisabled: {
+    backgroundColor: '#f2e9e0',
+    borderColor: '#e6d8cc',
+  },
+  rewardsStepButtonPressed: {
+    transform: [{ scale: 0.98 }],
+  },
+  rewardsStepButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6c3f1d',
+  },
+  rewardsCenter: {
+    alignItems: 'center',
+    minWidth: 110,
+  },
+  rewardsPointsValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2b1f14',
+  },
+  rewardsDiscountValue: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#2f6e3a',
+  },
+  rewardsHint: {
+    marginTop: 10,
+    fontSize: 12,
+    color: '#8b7c6f',
   },
   selectorNote: {
     marginTop: 6,

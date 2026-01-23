@@ -145,6 +145,16 @@ export default function OrderConfirmationScreen({ navigation, route }: Props) {
               </Text>
             </View>
           ) : null}
+          {summary.rewardsDiscount > 0 ? (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>
+                Rewards ({summary.rewardsPoints} pts)
+              </Text>
+              <Text style={styles.summaryValue}>
+                -{formatPrice(summary.rewardsDiscount)}
+              </Text>
+            </View>
+          ) : null}
           <View style={styles.summaryDivider} />
           <View style={styles.summaryRow}>
             <Text style={styles.summaryTotalLabel}>Total</Text>

@@ -10,6 +10,8 @@ type OrderSummary = {
     smallOrder: number;
   };
   discount: number;
+  rewardsDiscount: number;
+  rewardsPoints: number;
   total: number;
 };
 
