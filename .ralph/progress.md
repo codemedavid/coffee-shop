@@ -254,3 +254,31 @@ Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-010
   - Gotchas encountered: Expo web dev server needed explicit --port in CI mode when 8081 was busy.
   - Useful context: Rewards rules and transactions are now seeded for deterministic points calculations.
 ---
+## [2026-01-23 14:15:28] - US-025: Profile + preferences
+Thread: 
+Run: 20260123-140350-86707 (iteration 1)
+Run log: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-140350-86707-iter-1.log
+Run summary: /Users/ynadonaire/Documents/coffee-app/.ralph/runs/run-20260123-140350-86707-iter-1.md
+- Guardrails reviewed: yes
+- No-commit run: false
+- Commit: f474865 feat(profile): add local profile preferences
+- Post-commit status: clean
+- Verification:
+  - Command: npm run lint -> PASS
+  - Command: npm run typecheck -> PASS
+  - Command: npm test -> PASS
+  - Command: CI=1 npm run web -> FAIL (timed out after 120s; server started in background for browser check)
+- Files changed:
+  - .agents/tasks/prd-coffee.json
+  - App.tsx
+  - package-lock.json
+  - package.json
+  - src/data/profile.tsx
+  - src/models/types.ts
+  - src/screens/profile/ProfileScreen.tsx
+- What was implemented: Added AsyncStorage-backed profile context and a Profile screen with editable fields, validation, and preference toggles; wired the Profile tab to the new screen. Browser check screenshot at /Users/ynadonaire/Documents/coffee-app/.ralph/profile-screen.png.
+- **Learnings for future iterations:**
+  - Patterns discovered: Profile defaults can be sourced from `loadUsers()` and merged with local preferences.
+  - Gotchas encountered: `CI=1 npm run web` keeps Metro alive; run in background for browser checks.
+  - Useful context: Marketing opt-in persistence is stored under `@coffee/profile` in AsyncStorage.
+---
