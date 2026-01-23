@@ -68,6 +68,17 @@ export interface PaymentMethod {
   isDefault: boolean;
 }
 
+export interface Address {
+  id: string;
+  userId: string;
+  label: string;
+  line1: string;
+  city: string;
+  postalCode: string;
+  note?: string;
+  isDefault: boolean;
+}
+
 export interface RewardRule {
   id: string;
   pointsPerCurrency: number;

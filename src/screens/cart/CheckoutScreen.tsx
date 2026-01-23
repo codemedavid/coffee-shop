@@ -13,37 +13,11 @@ import { loadPaymentMethods, loadStores, loadUsers } from '../../data/seedLoader
 import { useCart } from '../../data/cart';
 import { createMockOrder } from '../../data/orders';
 import { useOrderHistory } from '../../data/orderHistory';
-import type { PaymentMethod, Store } from '../../models/types';
+import { useAddresses } from '../../data/addresses';
+import type { Address, PaymentMethod, Store } from '../../models/types';
 import type { RootStackParamList } from '../auth/types';
 
 type FulfillmentType = 'pickup' | 'delivery';
-
-type Address = {
-  id: string;
-  label: string;
-  line1: string;
-  city: string;
-  postalCode: string;
-  note?: string;
-};
-
-const addresses: Address[] = [
-  {
-    id: 'addr_001',
-    label: 'Home',
-    line1: '18 Jalan SS 2/24',
-    city: 'Petaling Jaya',
-    postalCode: '47300',
-    note: 'Leave at guardhouse',
-  },
-  {
-    id: 'addr_002',
-    label: 'Office',
-    line1: 'Level 12, Menara Spring',
-    city: 'Kuala Lumpur',
-    postalCode: '50450',
-  },
-];
 
 const SLOT_INTERVAL_MINUTES = 15;
 const PICKUP_LEAD_MINUTES = 20;
@@ -130,6 +104,7 @@ export default function CheckoutScreen() {
     () => stores.filter((store) => store.isDeliveryEnabled),
     [stores],
   );
+  const { addresses, isLoading: addressesLoading } = useAddresses();
   const { items, totals, clear } = useCart();
   const { addOrder } = useOrderHistory();
   const navigation =
@@ -181,9 +156,13 @@ export default function CheckoutScreen() {
     () => deliveryStores[0],
     [deliveryStores],
   );
-  const selectedAddress = useMemo(
+  const selectedAddress = useMemo<Address | undefined>(
     () => addresses.find((address) => address.id === selectedAddressId),
-    [selectedAddressId],
+    [addresses, selectedAddressId],
+  );
+  const defaultAddressId = useMemo(
+    () => addresses.find((address) => address.isDefault)?.id ?? '',
+    [addresses],
   );
 
   const pickupSlots = useMemo(
@@ -206,6 +185,20 @@ export default function CheckoutScreen() {
       setSelectedPaymentMethodId(defaultPaymentMethodId);
     }
   }, [defaultPaymentMethodId, selectedPaymentMethodId]);
+
+  useEffect(() => {
+    if (!defaultAddressId) {
+      setSelectedAddressId('');
+      return;
+    }
+    if (!selectedAddressId) {
+      setSelectedAddressId(defaultAddressId);
+      return;
+    }
+    if (!addresses.find((address) => address.id === selectedAddressId)) {
+      setSelectedAddressId(defaultAddressId);
+    }
+  }, [addresses, defaultAddressId, selectedAddressId]);
 
   useEffect(() => {
     if (redeemedPoints > maxRedeemablePoints) {
@@ -435,45 +428,84 @@ export default function CheckoutScreen() {
         ) : (
           <View style={styles.selectorCard}>
             <View style={styles.selectorHeader}>
-              <Text style={styles.sectionTitle}>Delivery address</Text>
+              <View style={styles.selectorHeaderRow}>
+                <Text style={styles.sectionTitle}>Delivery address</Text>
+                <Pressable
+                  onPress={() => navigation.navigate('Addresses')}
+                  style={({ pressed }) => [
+                    styles.manageLink,
+                    pressed && styles.manageLinkPressed,
+                  ]}
+                >
+                  <Text style={styles.manageLinkText}>Manage</Text>
+                </Pressable>
+              </View>
               <Text style={styles.sectionHint}>
                 Select where you want your order delivered.
               </Text>
             </View>
-            <View style={styles.selectorList}>
-              {addresses.map((address) => {
-                const isSelected = address.id === selectedAddressId;
-                return (
-                  <Pressable
-                    key={address.id}
-                    onPress={() => setSelectedAddressId(address.id)}
-                    style={({ pressed }) => [
-                      styles.selectorItem,
-                      isSelected && styles.selectorItemActive,
-                      pressed && styles.selectorItemPressed,
-                    ]}
-                  >
-                    <View style={styles.selectorTextBlock}>
-                      <Text style={styles.selectorTitle}>{address.label}</Text>
-                      <Text style={styles.selectorSubtitle}>
-                        {address.line1}
-                      </Text>
-                      <Text style={styles.selectorMeta}>
-                        {address.city} {address.postalCode}
-                      </Text>
-                      {address.note ? (
-                        <Text style={styles.selectorNote}>{address.note}</Text>
-                      ) : null}
-                    </View>
-                    {isSelected ? (
-                      <View style={styles.selectedBadge}>
-                        <Text style={styles.selectedBadgeText}>Selected</Text>
+            {addressesLoading ? (
+              <Text style={styles.emptyText}>Loading saved addresses...</Text>
+            ) : addresses.length === 0 ? (
+              <View style={styles.emptyAddressBlock}>
+                <Text style={styles.emptyText}>
+                  Add a delivery address to continue.
+                </Text>
+                <Pressable
+                  onPress={() => navigation.navigate('Addresses')}
+                  style={({ pressed }) => [
+                    styles.manageButton,
+                    pressed && styles.manageButtonPressed,
+                  ]}
+                >
+                  <Text style={styles.manageButtonText}>Add address</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.selectorList}>
+                {addresses.map((address) => {
+                  const isSelected = address.id === selectedAddressId;
+                  return (
+                    <Pressable
+                      key={address.id}
+                      onPress={() => setSelectedAddressId(address.id)}
+                      style={({ pressed }) => [
+                        styles.selectorItem,
+                        isSelected && styles.selectorItemActive,
+                        pressed && styles.selectorItemPressed,
+                      ]}
+                    >
+                      <View style={styles.selectorTextBlock}>
+                        <View style={styles.selectorTitleRow}>
+                          <Text style={styles.selectorTitle}>
+                            {address.label}
+                          </Text>
+                          {address.isDefault ? (
+                            <View style={styles.defaultBadge}>
+                              <Text style={styles.defaultBadgeText}>Default</Text>
+                            </View>
+                          ) : null}
+                        </View>
+                        <Text style={styles.selectorSubtitle}>
+                          {address.line1}
+                        </Text>
+                        <Text style={styles.selectorMeta}>
+                          {address.city} {address.postalCode}
+                        </Text>
+                        {address.note ? (
+                          <Text style={styles.selectorNote}>{address.note}</Text>
+                        ) : null}
                       </View>
-                    ) : null}
-                  </Pressable>
-                );
-              })}
-            </View>
+                      {isSelected ? (
+                        <View style={styles.selectedBadge}>
+                          <Text style={styles.selectedBadgeText}>Selected</Text>
+                        </View>
+                      ) : null}
+                    </Pressable>
+                  );
+                })}
+              </View>
+            )}
           </View>
         )}
         <View style={styles.selectorCard}>
@@ -727,6 +759,11 @@ const styles = StyleSheet.create({
   selectorHeader: {
     marginBottom: 12,
   },
+  selectorHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   sectionTitle: {
     fontSize: 15,
     fontWeight: '700',
@@ -759,6 +796,11 @@ const styles = StyleSheet.create({
   },
   selectorTextBlock: {
     flex: 1,
+  },
+  selectorTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   selectorTitle: {
     fontSize: 14,
@@ -894,6 +936,44 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: '#7a4b24',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  manageLink: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#f0d9bf',
+    backgroundColor: '#fff2db',
+  },
+  manageLinkPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  manageLinkText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#a45c2b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  emptyAddressBlock: {
+    gap: 10,
+  },
+  manageButton: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#6c3f1d',
+  },
+  manageButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  manageButtonText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff7ee',
     textTransform: 'uppercase',
     letterSpacing: 0.4,
   },

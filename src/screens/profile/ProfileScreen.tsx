@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   Pressable,
   SafeAreaView,
@@ -10,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useProfile } from '../../data/profile';
+import type { RootStackParamList } from '../auth/types';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
 
@@ -20,6 +23,8 @@ type ProfileErrors = {
 
 export default function ProfileScreen() {
   const { profile, isLoading, saveProfile } = useProfile();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [name, setName] = useState(profile.name);
   const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone);
@@ -171,6 +176,25 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Delivery</Text>
+          <Pressable
+            onPress={() => navigation.navigate('Addresses')}
+            style={({ pressed }) => [
+              styles.linkRow,
+              pressed && styles.linkRowPressed,
+            ]}
+          >
+            <View>
+              <Text style={styles.linkTitle}>Manage addresses</Text>
+              <Text style={styles.linkSubtitle}>
+                Add or update delivery locations.
+              </Text>
+            </View>
+            <Text style={styles.linkArrow}>›</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>
 
           <View style={styles.preferenceRow}>
@@ -308,6 +332,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6b5c52',
     marginTop: 4,
+  },
+  linkRow: {
+    marginTop: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eadfd6',
+    backgroundColor: '#fdfbf9',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  linkRowPressed: {
+    transform: [{ scale: 0.99 }],
+  },
+  linkTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3b2d24',
+  },
+  linkSubtitle: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#6b5c52',
+  },
+  linkArrow: {
+    fontSize: 20,
+    color: '#6b5c52',
   },
   saveButton: {
     backgroundColor: '#3b2d24',

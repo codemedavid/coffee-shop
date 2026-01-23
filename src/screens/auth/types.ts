@@ -1,5 +1,5 @@
 import type { CartItem } from '../../data/cart';
-import type { Order } from '../../models/types';
+import type { Address, Order } from '../../models/types';
 
 type OrderSummary = {
   subtotal: number;
@@ -23,13 +23,7 @@ type OrderConfirmationParams = {
     name: string;
     address: string;
   };
-  deliveryAddress?: {
-    label: string;
-    line1: string;
-    city: string;
-    postalCode: string;
-    note?: string;
-  };
+  deliveryAddress?: Address;
 };
 
 export type RootStackParamList = {
@@ -61,4 +55,5 @@ export type RootStackParamList = {
         itemId?: string;
       }
     | undefined;
+  Addresses: undefined;
 };
